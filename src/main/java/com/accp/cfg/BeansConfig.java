@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
-import com.accp.job.factory.JobAutowireFactoryBean;
 import com.github.pagehelper.PageHelper;
 
 @Configuration
@@ -43,10 +42,10 @@ public class BeansConfig {
 	 * @description: 启用Quartz默认监听器
 	 * @return
 	 */
-	@Bean
+	/*@Bean
 	public QuartzInitializerListener quartzInitializerListener() {
 		return new QuartzInitializerListener();
-	}
+	}*/
 
 	/**
 	 * 
@@ -55,14 +54,14 @@ public class BeansConfig {
 	 * @return
 	 * @throws IOException
 	 */
-	@Bean
+	/*@Bean
 	public Properties quartzProperties() throws IOException {
 		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
 		propertiesFactoryBean.setLocation(new ClassPathResource("/quartz.properties"));
 		// 在quartz.properties中的属性被读取并注入后再初始化对象
 		propertiesFactoryBean.afterPropertiesSet();
 		return propertiesFactoryBean.getObject();
-	}
+	}*/
 
 	/**
 	 * 
@@ -70,10 +69,10 @@ public class BeansConfig {
 	 * @description: 自定义QuartzJob中能植入springbean的工厂类
 	 * @return
 	 */
-	@Bean
+	/*@Bean
 	public JobAutowireFactoryBean jobAutowireFactoryBean() {
 		return new JobAutowireFactoryBean();
-	}
+	}*/
 
 	/**
 	 * 
@@ -82,13 +81,13 @@ public class BeansConfig {
 	 * @return
 	 * @throws IOException
 	 */
-	@Bean
+	/*@Bean
 	public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
 		SchedulerFactoryBean sfb = new SchedulerFactoryBean();
 		sfb.setQuartzProperties(quartzProperties());// 读取配置文件
 		sfb.setJobFactory(jobAutowireFactoryBean());// 支持Autowire
 		return sfb;
-	}
+	}*/
 
 	/**
 	 * 
@@ -97,8 +96,8 @@ public class BeansConfig {
 	 * @return
 	 * @throws IOException
 	 */
-	@Bean
+	/*@Bean
 	public Scheduler scheduler() throws IOException {
 		return schedulerFactoryBean().getScheduler();
-	}
+	}*/
 }
