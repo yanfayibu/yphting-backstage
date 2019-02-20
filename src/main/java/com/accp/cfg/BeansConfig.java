@@ -16,7 +16,7 @@ import com.accp.job.factory.JobAutowireFactoryBean;
 import com.github.pagehelper.PageHelper;
 
 @Configuration
-@MapperScan(basePackages = { "com.example.demo.dao" })
+@MapperScan(basePackages = { "com.accp.dao.*" })
 public class BeansConfig {
 
 	/**
