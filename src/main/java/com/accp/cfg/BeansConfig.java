@@ -63,6 +63,7 @@ public class BeansConfig {
 		return propertiesFactoryBean.getObject();
 	}*/
 
+
 	/**
 	 * 
 	 * @title: jobAutowireFactoryBean
