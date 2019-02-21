@@ -22,6 +22,7 @@ import com.accp.pojo.Admin;
 public class UserBiz {
 	@Autowired
 	private UserDao user;
+
 	/**
 	 * 
 	 * @title: Login
@@ -29,9 +30,34 @@ public class UserBiz {
 	 * @return
 	 * @description:后台用户登录
 	 */
-	public Admin Login(String username,String password) {
+	public Admin Login(String username, String password) {
 		return user.Login(username, password);
 	}
-	
-	
+
+	/**
+	 * 
+	 * @title: modify
+	 * @date:2019年2月21日 @time:上午11:03:37
+	 * @param adminID
+	 * @param password
+	 * @return
+	 * @description:修改后台用户密码
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, readOnly = false)
+	public int modifyUserPwd(int adminID, String password) {
+		return user.modifyUserPwd(adminID, password);
+	}
+
+	/**
+	 * 
+	 * @title: loginTime
+	 * @date:2019年2月21日 @time:上午11:39:10
+	 * @return
+	 * @description:管理员最后一次登录时间
+	 */
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, readOnly = false)
+	public int loginTime(int adminID) {
+		return user.loginTime(adminID);
+	}
+
 }

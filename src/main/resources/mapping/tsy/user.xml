@@ -7,11 +7,23 @@
 <mapper namespace="com.accp.dao.tsy.UserDao">
 		
 		<!-- 后台用户登录 -->
-		<select id="Login" resultMap="admin">
+		<select id="Login" resultType="Admin">
 			
 			SELECT * FROM `admin` WHERE `name` IN (#{username}) AND `password` IN (#{password})
 			
 		</select>
 			
 		
+		<!-- 修改密码 -->
+		<update id="modifyUserPwd">
+		
+			UPDATE `admin` SET `password`=#{password} WHERE `adminID`=#{adminID}
+		
+		</update>
+		
+		
+		<!-- 管理员最后登录 时间 -->
+		<update id="loginTime">
+			UPDATE `admin` SET `recentEntry`=NOW() WHERE `adminID`=#{adminID}
+		</update>
 </mapper>
