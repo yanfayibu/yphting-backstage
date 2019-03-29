@@ -11,7 +11,7 @@ public class Servicetype {
 
     private Integer sort;                 //排序(层次作用 默认0 0是一级服务 以此类推)
  
-    private Boolean display;              //是否显示
+    private Integer display;              //是否显示
 
     private Integer operationtime;        //未操作时间
 
@@ -21,7 +21,7 @@ public class Servicetype {
 
     private Integer proportion;           //违约金比例
 
-    private Boolean toexamine;            //是否审核tinyint(1)
+    private Integer toexamine;            //是否审核tinyint(1)
 
     private String advertisement;         //广告图片地址
 
@@ -57,11 +57,11 @@ public class Servicetype {
         this.sort = sort;
     }
 
-    public Boolean getDisplay() {
+    public Integer getDisplay() {
         return display;
     }
 
-    public void setDisplay(Boolean display) {
+    public void setDisplay(Integer display) {
         this.display = display;
     }
 
@@ -97,11 +97,11 @@ public class Servicetype {
         this.proportion = proportion;
     }
 
-    public Boolean getToexamine() {
+    public Integer getToexamine() {
         return toexamine;
     }
 
-    public void setToexamine(Boolean toexamine) {
+    public void setToexamine(Integer toexamine) {
         this.toexamine = toexamine;
     }
 
@@ -113,8 +113,8 @@ public class Servicetype {
         this.advertisement = advertisement == null ? null : advertisement.trim();
     }
 
-	public Servicetype(Integer stid, Integer stpid, String stname, Integer sort, Boolean display, Integer operationtime,
-			Integer confirmtime, Integer violatednumber, Integer proportion, Boolean toexamine, String advertisement) {
+	public Servicetype(Integer stid, Integer stpid, String stname, Integer sort, Integer display, Integer operationtime,
+			Integer confirmtime, Integer violatednumber, Integer proportion, Integer toexamine, String advertisement) {
 		super();
 		this.stid = stid;
 		this.stpid = stpid;

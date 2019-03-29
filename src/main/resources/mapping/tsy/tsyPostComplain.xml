@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyPostComplaintDao">
+
+
+	<!-- 带条件查询帖子投诉管理 -->
+
+	<select id="selectPostComplaint" resultType="TsyPostComplaintVo">
+
+		SELECT `cid`,us.`userName`,p.`title`,u.`userName` AS
+		userNames,ct.`ctName`,`TimeOfComplaint`,p.`operatingState`,p.`postID`
+		FROM `complaint` co
+		INNER JOIN `complainttype` ct ON ct.`ctID`=co.`ctID`
+		INNER JOIN `post` p ON p.`postID`=co.`pcID`
+		INNER JOIN `user` u ON u.`userID`=co.`userID`
+		INNER JOIN `user` us ON us.`userID`=co.`posting`
+
+		<where>
+
+			<!-- 帖子标题 -->
+			<if test="title!=null and !title.equals('@@@66*')">
+				and p.`title` LIKE '%${title}%'
+			</if>
+		</where>
+		 ORDER BY `TimeOfComplaint` DESC
+	</select>
+
+
+</mapper>

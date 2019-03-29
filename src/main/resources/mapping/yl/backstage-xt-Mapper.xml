@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.yl.IBackstageDao">
+	<select id="queryAllAdv"
+		resultType="com.accp.pojo.Advertisement">
+		SELECT *FROM advertisement
+	</select>
+	
+	<select id="queryAllAdvVo"
+		resultType="com.accp.vo.yl.AdvertisementVo">
+		SELECT *FROM advertisement INNER JOIN advertisementtype
+		ON
+		advertisement.atid=advertisementtype.`atid`
+		<where>
+			<if test="atid!=0">
+				advertisement.atid=#{atid}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryAllApplyfor" resultType="com.accp.vo.yl.ApplyforVo">
+	SELECT A.`auditstatus`,A.`aaID`,A.`aid`,ADV.`atitle`,A.`aimgPath`,A.`price`,A.`rentAMonth`,A.`startTime`,A.`endTime`,A.`applyTime`,A.`sponsorNmae`,A.`sponsorPhone` FROM `advertisementapply` AS A 
+	LEFT JOIN `advertisement` AS ADV ON A.`aid`=ADV.`aid`
+		<where>
+			<if test="atid!=0">
+				ADV.atid=#{atid}
+			</if>
+			<if test="aaid!=0">
+				A.aaID=#{aaid}
+			</if>
+		</where>
+	</select>
+	<update id="updateAdv">
+		UPDATE `advertisement` SET
+		atid=#{a.atid},`atitle`=#{a.atitle},`aorder`=#{a.aorder},`aimgPath`=#{a.aimgpath}
+		,`apcUrl`=#{a.apcurl},`aappUrl`=#{a.aappurl},`adescribe`=#{a.adescribe}
+		WHERE aid=#{a.aid}
+	</update>
+	
+	<update id="updateApplufor">
+		UPDATE `advertisementapply` SET `auditStatus`=#{alf.auditstatus},`startTime`=#{alf.starttime},`endTime`=#{alf.endtime} WHERE `aaID`=#{alf.aaID}; 
+		<if test="alf.auditstatus==1">
+			UPDATE `advertisement` SET `aimgPath`=#{alf.aimgpath},`apcUrl`=#{alf.apcurl},`aappUrl`=#{alf.aappurl},`state`=1,`startTime`=#{alf.starttime},`rentAMonth`=#{alf.rentamonth},`price`=#{alf.price} WHERE `aid`=#{alf.aid};
+		</if>
+	</update>
+	<insert id="addAdv">
+		INSERT INTO `advertisement`(`atid`,`atitle`,`aorder`,`aimgPath`,`apcUrl`,`aappUrl`,`adescribe`)
+		VALUES(#{a.atid},#{a.atitle},#{a.aorder},#{a.aimgpath},#{a.apcurl},#{a.aappurl},#{a.adescribe});
+	</insert>
+	<insert id="addzzs">
+		INSERT INTO `advertisementapply` (`sponsorNmae`, `aid`, `aimgPath`, `apcUrl`, `aappUrl`, `price`, `rentAMonth`, `startTime`, `endTime`, `applyTime`, `sponsorPhone`, `auditstatus`)
+		VALUES(#{a.sponsorNmae},#{a.aid},#{a.aimgpath},#{a.apcurl},#{a.aappurl},#{a.price},#{a.rentamonth},#{a.starttime},#{a.endtime},#{a.applytime},#{a.sponsorPhone},'0');
+	</insert>
+	<select id="queryObjAdv" resultType="com.accp.pojo.Advertisement">
+		select *from advertisement where aid=#{aid}
+	</select>
+	
+	<update id="updatePlate">
+		<if test="p==1">
+			UPDATE `advertisementtype` SET `atpx`='590*590' WHERE `atid`=4;
+			UPDATE `advertisementtype` SET `atpx`='590*285' WHERE `atid`=5;
+			UPDATE `advertisementtype` SET `atpx`='285*285' WHERE `atid`=6;
+			UPDATE `advertisementtype` SET `atpx`='590*275' WHERE `atid`=7;
+			UPDATE `advertisementtype` SET `atpx`='285*285' WHERE `atid`=16;
+			UPDATE `advertisementtype` SET `atpx`='590*275' WHERE `atid`=17;
+		</if>
+		<if test="p==2">
+			UPDATE `advertisementtype` SET `atpx`='580*275' WHERE `atid` IN (4,5,6,7,16,17)
+		</if>
+		<if test="p==3">
+			UPDATE `advertisementtype` SET `atpx`='380*390' WHERE `atid` IN (4,5,6,7,16,17)
+		</if>
+		<if test="p==4">
+			UPDATE `advertisementtype` SET `atpx`='590*285' WHERE `atid`=4;
+			UPDATE `advertisementtype` SET `atpx`='285*285' WHERE `atid`=5;
+			UPDATE `advertisementtype` SET `atpx`='285*285' WHERE `atid`=6;
+			UPDATE `advertisementtype` SET `atpx`='580*285' WHERE `atid`=7;
+			UPDATE `advertisementtype` SET `atpx`='590*590' WHERE `atid`=16;
+			UPDATE `advertisementtype` SET `atpx`='580*285' WHERE `atid`=17;
+		</if>
+		<if test="p==5">
+			UPDATE `advertisementtype` SET `atpx`='590*590' WHERE `atid`=4;
+			UPDATE `advertisementtype` SET `atpx`='590*285' WHERE `atid`=5;
+			UPDATE `advertisementtype` SET `atpx`='590*285' WHERE `atid`=6;
+			UPDATE `advertisementtype` SET `atpx`='385*285' WHERE `atid`=7;
+			UPDATE `advertisementtype` SET `atpx`='385*285' WHERE `atid`=16;
+			UPDATE `advertisementtype` SET `atpx`='385*285' WHERE `atid`=17;
+		</if>
+	</update>
+	<delete id="deleteAdv">
+		DELETE FROM advertisement WHERE aid IN
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>

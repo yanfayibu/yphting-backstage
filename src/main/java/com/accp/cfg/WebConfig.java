@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
@@ -49,4 +50,15 @@ public class WebConfig implements WebMvcConfigurer {
 		// 设置允许的方法
 		.allowedMethods("*");
 	}
+	
+	/**
+	 * 
+	* @title: serverEndpointExporter 
+	* @description: 注册WebSocket endpoint站点服务,单元测试的时候需要注释这个配置【非常重要】
+	* @return
+	 */
+	@Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
 }

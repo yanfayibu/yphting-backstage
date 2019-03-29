@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../layui/css/layui.css" />
+<link rel="stylesheet" href="../../css/style.css" />
+<title></title>
+<style type="text/css">
+	
+</style>
+</head>
+<body class="oneColLiqCtrHdr">
+	<div id="advertising">
+		<div id="header">
+		<h1>广告管理</h1>
+		<form class="layui-form" name="searchform">
+			<table border="0" class="table" cellSpacing="1" cellPadding="6"
+				width="100%">
+				<tbody>
+				<tr>
+					<td>
+						<label style="padding-left: 0; width:65px;">板块变更:</label>
+						<select lay-filter="plate">
+							<option value="1">--板块一--</option>
+							<option value="2">--板块二--</option>
+							<option value="3">--板块三--</option>
+							<option value="4">--板块四--</option>
+							<option value="5">--板块五--</option>
+						</select>
+					</td>
+				</tr>
+					<tr>
+						<td><label class="layui-form-label"
+							style="padding-left: 0; width:65px;">按分类查看:</label>
+							<div class="layui-input-block"
+								style="width: 170px; margin-left: 80px;">
+								<select name="atid" lay-verify="required" lay-filter="test" @change="goToPage(1,10)">
+									<option value="0">--请选择--</option>
+									<!-- <option th:each="temp,iterState:${fl}" th:value="${temp.atid}"
+										th:text="${temp.atname}"></option> -->
+										<option v-for="(temp,index) in fl" :value="temp.aid"
+										v-text="temp.atitle"></option>
+								</select>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+	</div>
+	<div style="float: right;">
+		<div class="layui-btn-group">
+			<button class="layui-btn layui-btn-primary layui-btn-sm all"
+				onClick="selectAll()" value="1">
+				<i class="layui-icon">&#x1005;</i>
+			</button>
+			<a href="/jwl/getoptioin"><button class="layui-btn layui-btn-primary layui-btn-sm">
+				<i class="layui-icon">&#xe654;</i>
+			</button></a>
+			<button class="layui-btn layui-btn-primary layui-btn-sm del">
+				<i class="layui-icon">&#xe640;</i>
+			</button>
+		</div>
+	</div>
+	<br>
+	<table width="100%">
+		<thead>
+			<tr>
+				<th width="5%" bgcolor="#ffffff"></th>
+				<th align="center">ID</th>
+				<th align="center">排序</th>
+				<th align="center">标题</th>
+				<th align="center">图片</th>
+				<th align="center">分类</th>
+				<th align="center">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- <tr th:each="temp,iterState:${AdvVo.list}">
+				<td align="center"><input type="checkbox"
+					th:value="${temp.aid}"></td>
+				<td align="center" th:text="${iterState.count}">测试数据</td>
+				<td align="center" th:text="${temp.aorder}">测试数据</td>
+				<td align="center" th:text="${temp.atitle}">测试数据</td>
+				<td align="center"><img  th:src=" 'http://127.0.0.1'+${temp.aimgPath}"  width="200"></td>
+				<td align="center" th:text="${temp.atname}">测试数据</td>
+				<td align="center"><a
+					th:href="@{/jwl/getObjAdv(aid=${temp.aid})}"><button
+							class="layui-btn layui-btn-primary layui-btn-sm">
+							<i class="layui-icon">&#xe642;</i>修改
+						</button></a></td>
+			</tr> -->
+			<tr v-for="(tmp,index) in AdvVo.list">
+				<td align="center"><input type="checkbox"
+					:value="tmp.aid"></td>
+				<td align="center" v-text="index">测试数据</td>
+				<td align="center" v-text="tmp.aorder">测试数据</td>
+				<td align="center" v-text="tmp.atitle">测试数据</td>
+				<td align="center"><img  :src=" 'http://127.0.0.1:1001'+tmp.aimgPath"  width="200"></td>
+				<td align="center" v-text="tmp.atname">测试数据</td>
+				<td align="center"> <a
+				 href="javascript:void(0)"  @click="update(tmp.aid)"><button
+							class="layui-btn layui-btn-primary layui-btn-sm">
+							<i class="layui-icon">&#xe642;</i>修改
+						</button></a></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td colspan="7" style="text-align: center;"><a
+					th:if="${AdvVo.hasPreviousPage}"
+					th:href="@{/jwl/getAdvVo(atid=${atid},p=${AdvVo. prePage},s=4)}"><button
+							class="layui-btn layui-btn-primary layui-btn-sm">
+							<i class="layui-icon">&#xe65a;</i>上一页
+						</button></a> &nbsp; <a th:if="${AdvVo.hasNextPage}"
+					th:href="@{/jwl/getAdvVo(atid=${atid},p=${AdvVo.nextPage},s=4)}"><button
+							class="layui-btn layui-btn-primary layui-btn-sm">
+							下一页 <i class="layui-icon">&#xe65b;</i>
+						</button></a></td>
+			</tr>
+		</tfoot>
+	</table>
+	</div>
+</body>
+<script type="text/javascript" src="../../js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="../../layui/layui.js"></script>
+<script type="text/javascript" src="../../js/vue.js"></script>
+<script>
+	//Demo
+	layui.use('form', function() {
+		var form = layui.form();
+		/*  form.on('select(test)', function(data) {
+			location.href='/jwl/getAdvVo?atid='+data.value+'&p=1&s=4';
+		});  */
+	  form.on('select(plate)', function(data) {
+		//alert(data.value);
+		$.ajax({
+			url: "/jwl/moAdv/"+data.value,
+			type: "post",
+			dataType: "json",
+			success: function(map) {
+				if(map.code==200){
+					layer.alert('板块修改成功。。。', {icon: 1});
+				}
+			},
+			error: function() {
+				alert("广告排版");
+			}
+		});
+	});  
+		$(document).on("click","#plate td dl dd",function(){
+			alert(123);
+			alert($(this).attr("lay-value"));
+		});
+		$(document).on("click", ".del", function() {
+			layer.confirm('确定删除', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var chk = 0; //选中数量
+				var valArr = new Array;//存放主键
+				$("tbody :checkbox").each(function(i) {
+					if ($(this).prop("checked") == true) {
+						valArr[i] = $(this).val();
+						chk++;
+					}
+				});
+				if (chk == 0) {
+					layer.msg('未选中', {
+						icon : 5
+					});
+					layer.close(index);
+					return;
+				}
+				var vals = valArr.join(',');
+				location.href = "/jwl/re?id=" + vals;
+				layer.close(index);
+			});
+		});
+		
+		//监听提交
+		form.on('submit(formDemo)', function(data) {
+			layer.msg(JSON.stringify(data.field));
+			return false;
+		});
+		
+	});
+	
+	advertising = new Vue({
+		el: "#advertising",
+		data: {
+			AdvVo: {},
+			fl:{}
+		},
+		methods: {
+			goToPage: function(p,s) {
+				var atid= $("select[name='atid']").val();
+				if(atid==null){
+					atid=0;
+				}
+				$.ajax({
+					url: "/jwl/getAdvVo/"+atid+"/"+p+"/"+s,
+					type: "get",
+					dataType: "json",
+					success: function(pageData) {
+						advertising.AdvVo = pageData;
+						//alert(JSON.stringify(pageData));
+					},
+					error: function() {
+						alert("广告");
+					}
+				});
+			},
+			goload: function() {
+				$.ajax({
+					url: "/jwl/getAllAdvType",
+					type: "get",
+					dataType: "json",
+					success: function(pageData) {
+						advertising.fl = pageData;
+						//alert(JSON.stringify(pageData));
+					},
+					error: function() {
+						alert("广告类型");
+					}
+				});
+			},
+			goToIndex : function() {
+				this.goToPage(this.AdvVo.firstPage,10);
+			},
+			goToNext : function() {
+				if (this.AdvVo.hasNextPage) {
+					this.goToPage(this.AdvVo.nextPage,10);
+				} else {
+					layer.alert('没有下一页了。。。', {icon: 2});
+				}
+			},
+			goToPre : function() {
+				if (this.AdvVo.hasPreviousPage) {
+					this.goToPage(this.AdvVo.prePage,10);
+				} else {
+					layer.alert('没有上一页了。。。', {icon: 2});
+				}
+			},
+			goToEnd : function() {
+				this.goToPage(this.AdvVo.lastPage,10);
+			},
+			update:function (aid){
+				//alert(aid);
+				//return '/jwl/getObjAdv?aid='+aid
+				location.href="/jwl/getObjAdv?aid="+aid;
+			},  
+		},
+		created: function() {
+			this.goToPage(1,20);
+			this.goload();
+		}
+	});
+	
+	function selectAll() {
+		var key = $(".all").val();
+		$("input[type='checkbox']").each(function() {
+			if (key == 0) {
+				$("input[type='checkbox']").prop('checked', false);
+				$(".all").val("1")
+			} else {
+				$("input[type='checkbox']").prop('checked', true);
+				$(".all").val("0")
+			}
+		});
+	}
+</script>
+</html>

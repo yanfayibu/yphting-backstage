@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyPostManagementDao">
+
+
+	<!-- 带条件查询帖子管理 -->
+
+	<select id="queryTsyPostManagement"
+		resultType="TsyPostManagementVo">
+
+		SELECT `postID`,`fmName`,`title`,`releaseTime`,ps.`auditStatus`
+		FROM
+		`post` ps INNER JOIN `forummanagement` fm ON ps.`fmID`=fm.`fmID`
+
+		<where>
+
+			and ps.`operatingState`=1
+
+			<!-- 帖子类别 -->
+			<if test="fmId!=0">
+				AND ps.`fmID`=#{fmId}
+			</if>
+
+			<!-- 标题 -->
+			<if test="title!=null and !title.equals('@@@66*')">
+
+				and ps.`title` LIKE '%${title}%'
+
+			</if>
+		</where>
+		ORDER BY ps.`releaseTime` DESC
+	</select>
+
+	<!-- 删除帖子 ,改变其帖子状态 -->
+
+	<update id="removeTsyPostManagement">
+		UPDATE `post` SET operatingState=2 WHERE
+		`postID`=#{postId}
+	</update>
+
+
+	<!-- 根据postId查询一个帖子对象 -->
+	<select id="queryOneTsyPostManagement" resultType="post">
+		SELECT * FROM
+		`post` WHERE `postID`=#{postId}
+	</select>
+
+	<!-- 修改整个帖子值 -->
+	<update id="modifyOneTsyPostManagement">
+		UPDATE `post` SET `operatingState`=#{post.operatingstate},
+		`adminOpinion`=#{post.adminopinion},`essence`=#{post.essence},`solid`=#{post.solid},`auditStatus`=#{post.auditstatus}
+		WHERE `postID`=#{post.postid}
+	</update>
+</mapper>

@@ -7,7 +7,7 @@ import java.util.Date;
 public class Advertisementapply {
     private Integer aaid;       //广告位申请编号
 
-    private Integer userid;     //用户编号
+    private String sponsorNmae;     //赞助商名称
 
     private Integer aid;        //广告编号
 
@@ -27,24 +27,40 @@ public class Advertisementapply {
 
     private Date applytime;     //申请时间
 
-    private Date audittime;     //审核时间
+    private String sponsorPhone;//赞助商电话
+    
+    private Integer auditstatus;//是否启用
+    
+    
+    public Integer getAuditstatus() {
+		return auditstatus;
+	}
+	public void setAuditstatus(Integer auditstatus) {
+		this.auditstatus = auditstatus;
+	}
 
-    private Integer auditstatus;//审核状态(1待审核2审核成功3未通过)
+	public String getSponsorNmae() {
+		return sponsorNmae;
+	}
 
-    public Integer getAaid() {
+	public void setSponsorNmae(String sponsorNmae) {
+		this.sponsorNmae = sponsorNmae;
+	}
+
+	public String getSponsorPhone() {
+		return sponsorPhone;
+	}
+
+	public void setSponsorPhone(String sponsorPhone) {
+		this.sponsorPhone = sponsorPhone;
+	}
+
+	public Integer getAaid() {
         return aaid;
     }
 
     public void setAaid(Integer aaid) {
         this.aaid = aaid;
-    }
-
-    public Integer getUserid() {
-        return userid;
-    }
-
-    public void setUserid(Integer userid) {
-        this.userid = userid;
     }
 
     public Integer getAid() {
@@ -119,28 +135,12 @@ public class Advertisementapply {
         this.applytime = applytime;
     }
 
-    public Date getAudittime() {
-        return audittime;
-    }
-
-    public void setAudittime(Date audittime) {
-        this.audittime = audittime;
-    }
-
-    public Integer getAuditstatus() {
-        return auditstatus;
-    }
-
-    public void setAuditstatus(Integer auditstatus) {
-        this.auditstatus = auditstatus;
-    }
-
-	public Advertisementapply(Integer aaid, Integer userid, Integer aid, String aimgpath, String apcurl, String aappurl,
-			Float price, Integer rentamonth, Date starttime, Date endtime, Date applytime, Date audittime,
-			Integer auditstatus) {
+	public Advertisementapply(Integer aaid, String sponsorNmae, Integer aid, String aimgpath, String apcurl,
+			String aappurl, Float price, Integer rentamonth, Date starttime, Date endtime, Date applytime,
+			String sponsorPhone) {
 		super();
 		this.aaid = aaid;
-		this.userid = userid;
+		this.sponsorNmae = sponsorNmae;
 		this.aid = aid;
 		this.aimgpath = aimgpath;
 		this.apcurl = apcurl;
@@ -150,8 +150,7 @@ public class Advertisementapply {
 		this.starttime = starttime;
 		this.endtime = endtime;
 		this.applytime = applytime;
-		this.audittime = audittime;
-		this.auditstatus = auditstatus;
+		this.sponsorPhone = sponsorPhone;
 	}
 
 	public Advertisementapply() {

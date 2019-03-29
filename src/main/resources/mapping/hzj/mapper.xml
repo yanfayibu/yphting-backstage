@@ -3,3 +3,264 @@
 <!DOCTYPE mapper
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.accp.dao.hzj.IserviceDao">
+	
+	<!--  退款管理-->
+	<select id="queryRefund" resultType="com.accp.vo.hzj.refundVo">
+		SELECT r.`refundID`,r.`orderID`,r.`applicationTime`,u.`userName`,s.`serviceTitle`,r.`applyRefundMoney`,o.`refundstatus`,r.`adminTime`,r.`refundExplain`
+		FROM `refund` r 
+		JOIN `user` u ON r.userID=u.`userID` 
+		JOIN `orders` o ON r.`orderID`=o.`orderID` 
+		JOIN `services` s ON o.`serviceID`=s.`serviceID`
+		<where>
+			<if test="userName!=null and !userName.equals('@@@66*')">
+				AND u.`userName` like '%${userName}%'
+			</if>
+			<if test="orderID!=null and !orderID.equals('@@@66*')">
+				AND o.`orderID` like '%${orderID}%'
+			</if>
+		</where>	
+		
+		 ORDER BY `applicationTime` DESC
+		
+	</select>
+	
+	
+	<!--查看退款詳情  -->
+	<select id="queryRefunDetailedMessage" resultType="com.accp.vo.hzj.refunDetailedMessageVo">
+		SELECT u.`userName`,r.`userID`,r.`orderID`,o.`totalPrice`,r.`applyRefundMoney`,r.`applicationTime`,o.`refundstatus`,r.`refundReason`,r.`ActualRefundMoney`,r.`auditTime`,r.`businessRemarks`,r.`adminTime`,r.`adminRemarks`
+		FROM `refund` r 
+		JOIN `user` u ON r.userID=u.`userID` 
+		JOIN `orders` o ON r.`orderID`=o.`orderID`
+		WHERE  r.`refundID`=${refundID}	
+	</select>
+	
+	
+	<!--修改退款信息  -->
+	<update id="modifyRefund">
+		UPDATE `refund` 
+		SET `adminTime`=now(),`adminRemarks`=#{refunDetailedMessageVo.adminremarks},`ActualRefundMoney`=#{refunDetailedMessageVo.ActualRefundMoney} 
+		WHERE  `refundID`=#{refunDetailedMessageVo.refundID};
+		UPDATE `user` SET `userMoney`=`userMoney`+#{refunDetailedMessageVo.ActualRefundMoney} WHERE `userID`=#{refunDetailedMessageVo.userID};
+		UPDATE `orders` SET `refundstatus`=#{refunDetailedMessageVo.refundstatus} WHERE `orderID`=#{refunDetailedMessageVo.orderID};
+	</update>
+	
+	
+	<!-- 查询商家Id -->
+	<select id="queryMerchantId" resultType="com.accp.vo.hzj.refunDetailedMessageVo">
+		SELECT s.`userID`FROM `refund` r 
+		JOIN `user` u ON r.userID=u.`userID` 
+		JOIN `orders` o ON r.`orderID`=o.`orderID`
+		JOIN `services` s ON o.`serviceID`=s.`serviceID`
+		WHERE  r.`refundID`=#{refundID}	 
+	</select>
+	
+	
+	<!--发送信息给用户  -->
+	<insert id="setToUser">
+		INSERT INTO 
+		`news`(`addRessee`,`content`,`sendingTime`,`readState`,`newsType`) 
+		VALUE(#{news.addressee},#{news.content},now(),1,1)
+	</insert>
+	
+	
+	<!--发送信息给商家  -->
+	<insert id="setToMerchant">
+		INSERT INTO 
+		`news`(`addRessee`,`content`,`sendingTime`,`readState`,`newsType`) 
+		VALUE(#{news.addressee},#{news.content},now(),1,1)
+	</insert>
+	
+	
+	<!--查询服务级别  -->
+	<select id="queryLevelName" resultType="servicetype">
+		SELECT * FROM `servicetype` LIMIT 5 
+	</select>
+	
+	<!--查询服务级别  -->
+	<select id="queryLevel" resultType="com.accp.vo.hzj.serviceLevelVo">
+		SELECT l.`serlevelID`,l.`serlevelName`,l.`stid`,t.`stName`,l.`serviceIntegralMin`,l.`serviceIntegralMax` 
+		FROM `servicelevel` l 
+		JOIN `servicetype` t ON l.`stid`=t.`stid`
+		<where>
+			<if test="stid!=0">
+				AND t.`stid`=#{stid}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!--查询服务级别详情  -->
+	<select id="queryLevelMessage" resultType="com.accp.vo.hzj.serviceLevelVo">
+		SELECT l.`serlevelName`,l.`stid`,t.`stName`,l.`serviceIntegralMin`,l.`serviceIntegralMax` 
+		FROM `servicelevel` l 
+		JOIN `servicetype` t ON l.`stid`=t.`stid`
+		<where>
+			<if test="serlevelid!=0">
+				AND l.`serlevelid`=#{serlevelid}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!--修改服务级别信息  -->
+	<update id="updateLevel">
+		UPDATE `servicelevel`
+		SET `serlevelName`=#{servicelevel.serlevelname},`stid`=#{servicelevel.stid},`serviceIntegralMin`=#{servicelevel.serviceintegralmin},`serviceIntegralMax`=#{servicelevel.serviceintegralmax}
+		WHERE  `serlevelID`=#{servicelevel.serlevelid}
+	</update>
+
+
+		
+	<!--删除服务级别信息  -->
+	<delete id="deleteLevel">
+		DELETE FROM `servicelevel` WHERE `serlevelID`=#{serlevelid}
+	</delete>
+	
+	
+	<!-- 新增服务级别信息 -->
+	<insert id="insertLevel">
+		INSERT INTO `servicelevel`
+		(`serlevelName`,`stid`,`serviceIntegralMin`,`serviceIntegralMax`) 
+		VALUE
+		(#{servicelevel.serlevelname},#{servicelevel.stid},#{servicelevel.serviceintegralmin},#{servicelevel.serviceintegralmax})
+	</insert>
+	
+	
+	<!--查询服务预约  -->
+	<select id="selectReservation" resultType="com.accp.vo.hzj.serviceReservationVo">
+		SELECT 
+		o.`orderID`,o.`userID`,u.`userName`,u.`shopName`,
+		t.`stid`,t.`stName`,s.`serviceTitle`,o.`integral`,
+		o.`orderTime`,o.`orderStatus`,o.`paymentTime`,o.`receiptTime`,
+		o.`provideServicesTime`,o.`completeTime`,o.`remarks`,o.`totalPrice`,
+		s.`serviceCoverImg`
+		FROM orders o
+		JOIN `user` u ON o.`userID`=u.`userID`
+		JOIN `services` s ON o.`serviceID`=s.`serviceID`
+		JOIN `servicetype` t ON s.`stid`=t.`stid`
+		<where>
+			<if test="orderid!=null and orderid!='' and !orderid.equals('@@@66*')"><!--    -->
+				AND o.`orderID` LIKE '%${orderid}%'
+			</if>
+			<if test="stid!=0">
+				AND t.`stid`=#{stid}
+			</if>
+			<if test="orderstatus!=0">
+				AND o.`orderStatus`=#{orderstatus}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!--查询服务审核  -->
+	<select id="selectAudit" resultType="com.accp.vo.hzj.serviceAuditVo">
+		SELECT s.`serviceID`,s.`stid`,t.`stName`,s.`serviceTitle`,s.`servicePrice`,s.`serviceCostInclude`,u.`userID`,u.`userName`,s.`auditStatus`,u.`businessState`,s.`releaseTime`,s.`serviceCoverImg`,s.`recommendBool`,u.`shopName`,s.`serviceCostTypeID`,s.`serviceIntro`,s.`adminOpinion`
+		FROM services s
+		JOIN `servicetype` t ON s.stid=t.stid
+		JOIN `user` u ON s.`userID`=u.`userID`
+		<where>
+			<if test="auditstatus!=0">
+				AND s.`auditStatus`=#{auditstatus}
+			</if>
+			<if test="stid!=0">
+				AND s.`stid`=#{stid}
+			</if>
+			<if test="servicetitle!=null and !servicetitle.equals('@@@66*')">
+				AND s.`serviceTitle` Like '%${servicetitle}%'
+			</if>
+			<if test="businessstate!=0">
+				AND u.`businessState`=#{businessstate}
+			</if>
+			<if test="serviceid!=0">
+				AND s.`serviceID`=#{serviceid}
+			</if>
+			<if test="recommendbool!=0">
+				AND s.`recommendBool`=#{recommendbool}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 修改服务审核信息 -->
+	<update id="updateAudit">
+		UPDATE `services` SET `auditStatus`=#{serviceAuditVo.auditstatus},`adminOpinion`=#{serviceAuditVo.adminopinion},`recommendBool`=#{serviceAuditVo.recommendbool} WHERE `serviceID`=#{serviceAuditVo.serviceid};
+		UPDATE `user` SET `businessState`=#{serviceAuditVo.businessstate} WHERE `userID`=#{serviceAuditVo.userid}
+	</update>
+	
+	
+		
+	<!--//查询服务类别管理  -->
+	<!-- <select id="selectType" resultType="com.accp.pojo.Servicetype">
+		SELECT * FROM `servicetype` 
+		<where>
+			<if test="stid!=0">
+				AND `stid`=#{stid}
+			</if>
+		</where>
+	</select> -->
+	<select id="selectType" resultType="com.accp.pojo.Servicetype">
+		SELECT * FROM `servicetype` 
+		<where>
+			<if test="stpid!=0">
+				AND `stpid`=#{stpid}
+			</if>
+			<if test="stid!=0">
+				AND `stid`=#{stid}
+			</if>
+		</where>
+	</select>
+	
+	
+	<!--修改服务类别管理  -->
+	<update id="updateType">
+		UPDATE `servicetype`
+		SET `stPid`=#{servicetype.stpid},`stName`=#{servicetype.stname},`sort`=#{servicetype.sort},`display`=#{servicetype.display}
+		WHERE  `stid`=#{servicetype.stid}
+	</update>
+
+
+		
+	<!--删除服务类别管理 -->
+	<delete id="deleteType">
+		DELETE FROM `servicetype` WHERE `stid`=#{stid}
+	</delete>
+	
+	
+	<!-- 新增服务类别管理 -->
+	<insert id="insertType">
+		INSERT INTO `servicetype`
+		(`stPid`,`stName`,`sort`,`display`) 
+		VALUE
+		(#{servicetype.stpid},#{servicetype.stname},#{servicetype.sort},#{servicetype.display})
+	</insert>
+	
+	
+	<!--修改服务审核管理  -->
+	<update id="updateAuditManagement">
+		UPDATE `servicetype`
+		SET `stName`=#{servicetype.stname},`toExamine`=#{servicetype.toexamine}
+		WHERE  `stid`=#{servicetype.stid}
+	</update>
+	
+	
+	<!-- 查询服务投诉 -->
+	<select id="selectComplaint" resultType="com.accp.vo.hzj.serviceComplaintVo">
+		SELECT sr.`srID`,s.`serviceTitle`,u.`userName`,ct.`ctName`,sr.`auditStatus`,sr.`TimeOfComplaint`
+		FROM`servicereporting` sr
+		JOIN `user` u ON sr.`userID`=u.`userID`
+		JOIN `services` s ON sr.`serviceID`=s.`serviceID`
+		JOIN `complainttype` ct ON sr.`ctID`=ct.`ctID`
+		<where>
+			<if test="servicetitle!=null and !servicetitle.equals('@@@66*')">
+				AND s.`serviceTitle` LIKE '%${servicetitle}%'
+			</if>
+		</where>
+	</select>
+	
+	
+	<!--修改服务类别管理  -->
+	<update id="updateComplaint">
+		UPDATE `servicereporting` SET `auditStatus`=#{serviceComplaintVo.auditstatus} WHERE `srID`=#{serviceComplaintVo.srid}
+	</update>
+</mapper>

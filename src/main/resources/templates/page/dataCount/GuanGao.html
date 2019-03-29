@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>广告费用统计</title>
+<link rel="stylesheet" type="text/css"
+	href="../../css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="css/MemberCss.css" />
+</head>
+<body>
+	<div id="post">
+		<div class="title">
+			<h3>月度广告费用统计</h3>
+			<div class="formdiv">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="exampleInputName1">年份</label> <select
+							class="form-control" id="exampleInputName1">
+							<option value="0">全部</option>
+							<option value="2019">2019年</option>
+							<option value="2018">2018年</option>
+							<option value="2017">2017年</option>
+							<option value="2016">2016年</option>
+							<option value="2015">2015年</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName1">月份</label> <select
+							class="form-control" id="exampleInputName2">
+							<option value="0">全部</option>
+							<option value="1">1月份</option>
+							<option value="2">2月份</option>
+							<option value="3">3月份</option>
+							<option value="4">4月份</option>
+							<option value="5">5月份</option>
+							<option value="6">6月份</option>
+							<option value="7">7月份</option>
+							<option value="8">8月份</option>
+							<option value="9">9月份</option>
+							<option value="10">10月份</option>
+							<option value="11">11月份</option>
+							<option value="12">12月份</option>
+
+							
+						</select>
+					</div>
+					
+					<button type="button" class="btn btn-default" @click="goSumbit()">搜索</button>
+				</form>
+			</div>
+		</div>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>年份</th>
+					<th>月份</th>
+					<th>总金额</th>
+					<th>状态</th>
+					<!-- <th>操作</th> -->
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(temp,index) in pageInfo.list">
+					<td v-text="index+1"></td>
+					<td v-text="temp.years">水中小虫</td>
+					<td v-text="temp.months">水中小虫</td>
+					<td v-text="temp.money">金币</td>
+					<td><a href="subpage/GuangGaoCount_show.html" @click="modifyPost(temp.years,temp.months)">查看</a></td>
+				</tr>
+
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="15">
+						<nav style="display: inline-block;">
+							<ul class="pager">
+								<li><a @click="goToIndex()" href="javascript:void(0)">首页</a>
+								</li>
+								<li><a @click="goToPre()" href="javascript:void(0)">上一页</a>
+								</li>
+								<li><a @click="goToNext()" href="javascript:void(0)">下一页</a>
+								</li>
+								<li><a @click="goToEnd()" href="javascript:void(0)">末页</a>
+								</li>
+							</ul>
+						</nav>第<span v-text="pageInfo.pageNum">1</span>页&nbsp;/共<label
+						v-text="pageInfo.pages">10</label>页
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</body>
+
+
+<script src="../../js/jquery-1.8.3.js" type="text/javascript"></script>
+<script type="text/javascript" src="../../js/vue.js"></script>
+<script type="text/javascript" src="../../layui/layui.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+
+		var name = 0;
+		var names = 0;
+
+		
+		layui.config({
+			base : "js/"
+		}).use(['form','layer','jquery','laypage','upload', 'laydate'],function(){
+		
+		
+		replyVm = new Vue({
+			el : "#post",
+			data : {
+				pageInfo : {},
+				fmName : {}
+			},
+			methods : {
+				goToPage : function(n, s, name, names) {
+
+					$.ajax("/tsyDataCountApi/queryGuangGaoYearMonth/"
+							+ name + "/" + names + "/" + n + "/" + s, {
+						type : "GET",
+						dataType : "json",
+						timeout : 6000,
+						xhrFields : {
+							withCredentials : true
+						},
+						crossDomain : true, //访问session取值时必加，取值那边也要加
+						success : function(pageData) { //成功readyState==4&&status==200
+							replyVm.pageInfo = pageData;
+						}
+
+					});
+
+				},
+				
+				goToIndex : function() {
+					this.goToPage(1, this.pageInfo.pageSize, name, names);
+				},
+				goToNext : function() {
+					if (this.pageInfo.hasNextPage) {
+						this.goToPage(this.pageInfo.nextPage,
+								this.pageInfo.pageSize, name, names);
+					} else {
+						layer.alert('没有下一页了。。。', {icon: 2});
+					}
+				},
+				goToPre : function() {
+					if (this.pageInfo.hasPreviousPage) {
+						this.goToPage(this.pageInfo.prePage,
+								this.pageInfo.pageSize, name, names);
+					} else {
+						layer.alert('没有上一页了。。。', {icon: 2});
+					}
+				},
+				goToEnd : function() {
+					this.goToPage(this.pageInfo.lastPage,
+							this.pageInfo.pageSize, name, names);
+				},
+				goSumbit : function() {
+
+					var temp_name = $("#exampleInputName1").val();
+					var temp_names = $("#exampleInputName2").val();
+
+					if (temp_name) {
+						name = temp_name;
+					} else {
+						name = 0;
+					}
+					if (temp_names) {
+						names = temp_names;
+					} else {
+						names = 0;
+					}
+					//alert(fmId);
+					this.goToPage(1, 2, name, names);
+
+				},
+				modifyPost : function(year,month) {
+
+					window.sessionStorage.setItem("year3", year);
+					window.sessionStorage.setItem("month3", month);
+
+				}
+				
+
+			},
+			created : function() {
+				this.goToPage(1, 2, name, names);
+			}
+		});
+		});
+	});
+</script>
+</html>

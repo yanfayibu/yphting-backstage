@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>服务审核</title>
+		<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/MemberCss.css"/>
+	</head>
+	<body>
+		<div id="serviceAudit">
+			<div class="title">
+			<h3>服务审核</h3>
+			<div class="formdiv">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="exampleInputName2">服务类别:</label>
+						<select class="form-control" id="stid" >
+								<option value="0">全部</option>
+								<option class="stid" v-for="(temp,index) in pageInfo" v-bind:value="temp.stid"  v-text="temp.stname" ></option>
+						</select>
+						
+						<label for="exampleInputName2">营业状态:</label>
+						<select class="form-control" id="businessstate" >
+								<option value="0">全部</option>
+								<option value="1">营业</option>
+								<option value="2">暂停</option>
+								<option value="3">关闭</option>
+						</select>
+						
+						<label for="exampleInputName2">审核状态:</label>
+						<select class="form-control" id="auditstatus" >
+								<option value="0">全部</option>
+								<option value="1">待审核</option>
+								<option value="2">审核成功</option>
+								<option value="3">未通过</option>
+						</select>
+						
+						<label for="exampleInputName2">推荐状态:</label>
+						<select class="form-control" id="recommendbool" >
+								<option value="0">全部</option>
+								<option value="1">推荐</option>
+								<option value="2">不推荐</option>
+						</select>
+						
+						<label for="exampleInputName2">标题:</label>
+						<input type="text" class="form-control" id="servicetitle" value="" placeholder="标题">
+					</div>
+					<button type="button" class="btn btn-default" @click="goSumbit()">搜索</button>
+				</form>
+			</div>
+		</div>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>服务类别</th>
+					<th>标题</th>
+					<th>会员</th>
+					<th>审核状态</th>
+					<th>营业状态</th>
+					<th>发布时间</th>
+					<th>推荐状态</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(temp,index) in listInfo.list">
+					<td v-text="temp.serviceid">1</td>
+					<td v-text="temp.stname">2</td>
+					<td v-text="temp.servicetitle">3</td>
+					<td v-text="temp.username">4</td>
+					<td v-if="temp.auditstatus==1">待审核</td>
+					<td v-if="temp.auditstatus==2">审核成功</td>
+					<td v-if="temp.auditstatus==3">未通过</td>
+					<td v-if="temp.businessstate==1">营业</td>
+					<td v-if="temp.businessstate==2">暂停</td>
+					<td v-if="temp.businessstate==3">关闭</td>
+					<td v-text="temp.releasetime">7</td>
+					<td v-if="temp.recommendbool==1">推荐</td>
+					<td v-if="temp.recommendbool==2">不推荐</td>
+					<td>
+						<a href="/page/services/auditDetailedMessage.html" @click="auditModify(temp.serviceid)">修改</a>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="15">
+						
+						<nav style="display: inline-block;">
+							<ul class="pager">
+								<li><a @click="goToIndex()" href="javascript:void(0)">首页</a>
+								</li>
+								<li><a @click="goToPre()" href="javascript:void(0)">上一页</a>
+								</li>
+								<li><a @click="goToNext()" href="javascript:void(0)">下一页</a>
+								</li>
+								<li><a @click="goToEnd()" href="javascript:void(0)">末页</a>
+								</li>
+							</ul>
+						</nav>第<span v-text="listInfo.pageNum">1</span>页&nbsp;/共<label
+						v-text="listInfo.pages">10</label>页
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+		
+	</body>
+	<script src="../../js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="../../js/bootstrap.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../js/dialog.js"></script>
+	<script>
+	$(function() {
+		var servicetitle = "@@@66*";
+		var stid = 0;
+		var auditstatus= 0;
+		var businessstate= 0;
+		var serviceid= 0;
+		var recommendbool= 0;
+		replyVm = new Vue({
+			el : "#serviceAudit",
+			data : {
+				pageInfo : {},
+				listInfo : {},
+			},
+			methods : {
+				goToPage : function(n, s, stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool) {
+			
+					$.ajax("/c/hzj/queryAudit/"+ stid +"/"+auditstatus+"/"+servicetitle+"/"+businessstate+"/"+serviceid+"/"+recommendbool+"/"+ n +"/"+ s, {
+						type : "GET",
+						dataType : "json",
+						timeout : 6000,
+						xhrFields : {
+							withCredentials : true
+						},
+						crossDomain : true, //访问session取值时必加，取值那边也要加
+						success : function(pageData) { //成功readyState==4&&status==200
+							replyVm.listInfo = pageData;
+						
+						}
+
+					});
+
+				}, 
+				goToIndex : function() {
+					var stid = $("#stid").val();
+					var businessstate=$("#businessstate").val();
+					var auditstatus=$("#auditstatus").val();
+					var servicetitle=$("#servicetitle").val();
+					var recommendbool=$("#recommendbool").val();
+					if(servicetitle==null||servicetitle==''){
+						servicetitle= "@@@66*"
+					}else{
+						servicetitle=$("#servicetitle").val();
+					}
+					this.goToPage(1, this.listInfo.pageSize,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+				},
+				goToNext : function() {
+					var stid = $("#stid").val();
+					var businessstate=$("#businessstate").val();
+					var auditstatus=$("#auditstatus").val();
+					var servicetitle=$("#servicetitle").val();
+					var recommendbool=$("#recommendbool").val();
+					if(servicetitle==null||servicetitle==''){
+						servicetitle= "@@@66*"
+					}else{
+						servicetitle=$("#servicetitle").val();
+					}
+					if (this.listInfo.hasNextPage) {
+						this.goToPage(this.listInfo.nextPage,
+								this.listInfo.pageSize,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+					} else {
+						showAlertDialog("没有下一页了。。。");
+					}
+				},
+				goToPre : function() {
+					var stid = $("#stid").val();
+					var businessstate=$("#businessstate").val();
+					var auditstatus=$("#auditstatus").val();
+					var servicetitle=$("#servicetitle").val();
+					var recommendbool=$("#recommendbool").val();
+					if(servicetitle==null||servicetitle==''){
+						servicetitle= "@@@66*"
+					}else{
+						servicetitle=$("#servicetitle").val();
+					}
+					if (this.listInfo.hasPreviousPage) {
+						this.goToPage(this.listInfo.prePage,
+								this.listInfo.pageSize,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+					} else {
+						showAlertDialog("没有上一页了。。。");
+					}
+				},
+				goToEnd : function() {
+					var stid = $("#stid").val();
+					var businessstate=$("#businessstate").val();
+					var auditstatus=$("#auditstatus").val();
+					var servicetitle=$("#servicetitle").val();
+					var recommendbool=$("#recommendbool").val();
+					if(servicetitle==null||servicetitle==''){
+						servicetitle= "@@@66*"
+					}else{
+						servicetitle=$("#servicetitle").val();
+					}
+					this.goToPage(this.listInfo.pages,
+							this.listInfo.pageSize,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+				},
+				goSumbit : function() {
+					var stid = $("#stid").val();
+					var businessstate=$("#businessstate").val();
+					var auditstatus=$("#auditstatus").val();
+					var servicetitle=$("#servicetitle").val();
+					var recommendbool=$("#recommendbool").val();
+					if(servicetitle==null||servicetitle==''){
+						servicetitle= "@@@66*"
+					}else{
+						servicetitle=$("#servicetitle").val();
+					}
+					//alert(stid+"=="+businessstate+"=="+auditstatus+"=="+servicetitle)
+					this.goToPage(1, 1,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+				}, 
+				auditModify: function(serviceid) {
+					/* alert(serviceid) */
+					window.sessionStorage.setItem("serviceid", serviceid);
+				},
+				getName:function(){
+					$.ajax("/c/hzj/queryLevelName", {
+						type : "GET",
+						dataType : "json",
+						timeout : 6000,
+						xhrFields : {
+							withCredentials : true
+						},
+						crossDomain : true, //访问session取值时必加，取值那边也要加
+						success : function(pageData) { //成功readyState==4&&status==200
+							replyVm.pageInfo = pageData;
+						}
+					});
+				},
+
+			}, 
+			created : function() {
+				this.getName()
+				this.goToPage(1, 1,stid, auditstatus, servicetitle, businessstate, serviceid,recommendbool);
+				
+			}
+		}); 
+
+	}); 
+	</script>
+</html>

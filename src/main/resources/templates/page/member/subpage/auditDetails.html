@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>审核详情</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/MemberCss.css"/>
+	</head>
+	<body>
+		<div id="auditDetails">
+			<h2>鉴定信息 </h2>
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<td>会员:</td>
+					<td>{{member.userName}}</td>
+					<td>类型:</td>
+					<td>{{user.stName}}</td>
+				</tr>
+				<tr>
+					<td>姓名:</td>
+					<td>{{user.name}}</td>
+					<td>性别:</td>
+					<td>
+						<span v-if="user.sex==1">男</span>
+						<span v-else-if="user.sex==2">女</span>
+					</td>
+				</tr>
+				<tr>
+					<td>身高:</td>
+					<td>{{user.height}}cm</td>
+					<td>年龄:</td>
+					<td>{{user.age}}</td>
+				</tr>
+				<tr>
+					<td>签证类型:</td>
+					<td>{{user.visatype}}</td>
+					<td>证件号码:</td>
+					<td>{{user.certificates}}</td>
+				</tr>
+			</tbody>
+			<!--
+            	作者：1057672274@qq.com
+            	时间：2019-03-05
+            	描述：自驾游
+            -->
+			<tbody v-if="user.stid==1">
+				<tr>
+					<td>导游经验</td>
+					<td>{{user.experience}}</td>
+					<td>是否有车</td>
+					<td>
+						<span v-if="user.vehicle">有</span>
+						<span v-else>没有</span>
+					</td>
+				</tr>
+				<tr>
+					<td>导游证:</td>
+					<td>
+						<span v-if="user.guidecard">有</span>
+						<span v-else>没有</span>
+					</td>
+					<td>在韩工作/学习时间:</td>
+					<td>{{user.inkorea}}</td>
+				</tr>
+			</tbody>
+			<!--
+            	作者：1057672274@qq.com
+            	时间：2019-03-05
+            	描述：微整容
+            -->
+			<tbody v-if="user.stid==2">
+				<tr>
+					<td>签证类型:</td>
+					<td>{{user.visatype}}</td>
+					<td>证件号码:</td>
+					<td>{{user.certificates}}</td>
+				</tr>
+				<tr>
+					<td>整容资质:</td>
+					<td></td>
+					<td>是否有车:</td>
+					<td>
+						<span v-if="user.vehicle">有</span>
+						<span v-else>没有</span>
+					</td>
+				</tr>
+				<tr>
+					<td>整容医院营业执照:</td>
+					<td colspan="3">
+						<img src="../../../images/alipay.jpg" width="100px"/>
+					</td>
+				</tr>
+				<tr>
+					<td>合作医院官网网址:</td>
+					<td>{{user.cooperativehospitalurl}}</td>
+					<td>医院联系电话:</td>
+					<td>{{user.hospitalphone}}</td>
+				</tr>
+			</tbody>
+			<!--
+            	作者：1057672274@qq.com
+            	时间：2019-03-05
+            	描述：韩语翻译
+            -->
+			<tbody v-if="user.stid==4">
+				<tr>
+					<td>翻译资质</td>
+					<td>
+						<span v-if="user.translatetype==1">证书</span>
+						<span v-else-if="user.translatetype==2">语言成绩</span>
+					</td>
+					<td>网址</td>
+					<td>
+						{{user.translatewebsite}}
+					</td>
+				</tr>
+				<tr>
+					<td>资质图片</td>
+					<td colspan="">
+						<img src="../../../images/alipay.jpg"/>
+					</td>
+				</tr>
+				<tr>
+					<td>韩国营业执照</td>
+					<td colspan="">
+						<img src="../../../images/alipay.jpg"/>
+					</td>
+				</tr>
+				<tr>
+					<td>是否有办公室</td>
+					<td>
+						<span v-if="user.office">有</span>
+						<span v-else>没有</span>
+					</td>
+					<td>地址</td>
+					<td>{{user.officedetailed}}</td>
+				</tr>
+			</tbody>
+			<!--
+            	作者：1057672274@qq.com
+            	时间：2019-03-05
+            	描述：留学中介
+            -->
+			<tbody v-if="user.stid==3">
+				<tr>
+					<td>留学中介官网网址</td>
+					<td>{{user.officialnetworkurl}}</td>
+					<td>实力展示</td>
+					<td>{{user.strength}}</td>
+				</tr>
+				<tr>
+					<td>在韩工作/学习时间</td>
+					<td colspan="3">{{user.inkorea}}</td>
+				</tr>
+				<tr>
+					<td>是否有办公室</td>
+					<td>
+						<span v-if="user.office">有</span>
+						<span v-else>没有</span>
+					</td>
+					<td>地址</td>
+					<td>{{user.officedetailed}}</td>
+				</tr>
+				<tr>
+					<td>韩国营业执照</td>
+					<td colspan="">
+						<img src="../../../images/alipay.jpg"/>
+					</td>
+				</tr>
+			</tbody>
+			<!--
+            	作者：1057672274@qq.com
+            	时间：2019-03-05
+            	描述：学习资源
+            -->
+			<tbody v-if="user.stid==5">
+				<tr>
+					<td>所学专业</td>
+					<td colspan="3">{{user.studymajor}}</td>
+				</tr>
+				<tr>
+					<td>成绩单</td>
+					<td colspan="3">{{user.schoolreport}}</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td>联系电话:</td>
+					<td>{{user.phone}}</td>
+					<td>邮箱:</td>
+					<td>{{user.email}}</td>
+				</tr>
+				<tr>
+					<td>在韩住址:</td>
+					<td colspan="3">
+						{{user.detailed}}
+					</td>
+				</tr>
+				<tr>
+					<td>状态</td>
+					<td colspan="3">
+						<input type="radio" name="auditStatus" value="1" v-model="user.auditstatus"/>待审核
+						<input type="radio" name="auditStatus" value="2" v-model="user.auditstatus"/>审核成功
+						<input type="radio" name="auditStatus" value="3" v-model="user.auditstatus"/>未通过
+					</td>
+				</tr>
+				<tr>
+					<td>管理员理由</td>
+					<td colspan="3">
+						<textarea name="adminOpinion" cols="80" v-model="user.adminopinion"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<input class="btn btn-default" type="button" value="保存">
+						<input class="btn btn-default" type="button" value="返回" onclick="history.go(-1)">
+					</td>
+				</tr>
+			</tfoot>	
+		</table>
+		</div>
+	</body>
+	<script src="../../../js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="../../../js/bootstrap.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../../js/vue.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			var applyid= window.sessionStorage.getItem("auditId");
+			auditDetails = new Vue({
+				el: "#auditDetails",
+				data: {
+					user: {},
+					member:{}
+				},
+				methods: {
+					goToPage: function() {
+						alert(applyid);
+						$.ajax({
+							url: "/yl/getAuthenDetails/"+applyid,
+							type: "get",
+							dataType: "json",
+							success: function(pageData) {
+								auditDetails.user = pageData;
+								$.ajax({
+									url:"/yl/getVipById/"+pageData.userid,
+									type:"post",
+									dataType:"json",
+									success:function(data){
+										auditDetails.member=data;
+									}
+								});
+							},
+							error: function() {
+								alert("鉴定详情");
+							}
+						});
+					},
+					/* updateUser:function(){
+						$.ajax({
+							url:"/yl/updateVip",
+							type:"post",
+							data:JSON.stringify(MemberModify.user),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(map){
+								if(map.code==200){
+									alert("保存成功");
+								}else if(map.code==500){
+									alert("保存失败");
+								}
+							}
+						});
+					}, */
+				},
+				created: function() {
+					this.goToPage();
+				}
+			});
+		})
+	</script>
+</html>

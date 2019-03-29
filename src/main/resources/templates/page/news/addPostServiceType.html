@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="/layui/css/layui.css">
+	</head>
+	<body>
+		<form id="vmAddCnt">
+			<table class="layui-table">
+				<tr>
+					<td><span style="float: right;">上级服务类别:</span></td>
+					<td>
+						<select class="layui-select-disabled" id="AddPsel">
+							<option value="0" v-bind:stCl="0">服务</option>
+							
+							<template v-for="(temp,index) in serType">
+								<option v-bind:value="temp.stid" v-bind:stCl="1">
+									{{temp.stName}}
+								</option>
+								
+								<template v-for="tem in temp.data">
+									<option v-text="'——'+tem.stName" v-bind:value="tem.stid" v-bind:stCl="2"></option>
+								</template>
+								
+							</template>
+						</select>
+					</td>
+				</tr>
+				
+				<tr>
+					<td><span style="float: right;">服务类别名称:</span></td>
+					<td><input type="text" class="layui-input" id="stName"/></td>
+				</tr>
+				<tr>
+					<td><span style="float: right;">排序:</span></td>
+					<td><input type="text" class="layui-input" id="sort"/></td>
+				</tr>
+				<tr>
+					<td><span style="float: right;">是否显示:</span></td>
+					<td>
+						<input name="flag" type="radio" value="true" />显示 
+						<input name="flag" type="radio" value="false" />不显示
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="button" class="layui-btn" value="保存"/>
+						<input type="button" class="layui-btn" value="返回"/>
+					</td>
+				</tr>
+			</table>
+		
+		</form>
+	</body>
+	
+	
+	<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="/js/vue.js"></script>
+	<script type="text/javascript" src="/layui/layui.js"></script>
+	
+	<script type="text/javascript">
+	
+	var vmAdd = new Vue(
+			{
+				el : "#vmAddCnt",
+				data : {
+					serType : [],
+				},
+				methods : {
+					initInfo : function(stclass){
+						var topArr = []; //声明一个数组，存储所有的json数据
+						$.ajax({
+							url : "/gwx/c/service/stclassSel",
+							type : "GET",
+							data : {
+								"stclass" : stclass
+							},
+							dataType : "JSON",
+							success : function(jsondata) {
+								
+								for (var i = 0; i < jsondata.length; i++) {
+									if (jsondata[i].stPid == 0) {
+										jsondata[i].data = []; //给一级菜单下面添加data数据，存放二级菜单
+										topArr.push(jsondata[i]); //得到一级菜单
+									}
+								}
+
+								for (var j = 0; j < topArr.length; j++) {
+									for (var i = 0; i < jsondata.length; i++) {
+										if (jsondata[i].stPid == topArr[j].stid) {
+											jsondata[i].data = [];
+											topArr[j].data.push(jsondata[i]); //把获取的二级菜单存放到一级菜单的data对象中
+										}
+									}
+								}
+								//console.log(topArr);
+								
+							},
+						});
+						
+						vmAdd.serType = topArr;
+					},
+				
+				},
+				
+			});
+			
+			
+		vmAdd.initInfo(0);	
+		
+		$("[value='保存']").click(function(){
+			var stPid=$("#AddPsel").val();
+			var stclass=$("#AddPsel").find('option:selected').attr('stCl');
+			var stName=$("#stName").val();
+			var sort=$("#sort").val();
+			var display=$("input[name='flag']:checked").val();
+			if(stName==""||sort==""||display==""){
+				layui.use('layer', function(){
+					  var layer = layui.layer;
+					  layer.msg('请完善信息!');
+				});
+				return;
+			}
+			
+			var jsonObj={};
+			jsonObj["stPid"]=stPid;
+			jsonObj["stclass"]=parseInt(stclass)+1;
+			jsonObj["stName"]=stName;
+			jsonObj["sort"]=sort;
+			jsonObj["display"]=display;
+			var jsonStr=JSON.stringify(jsonObj);//序列化成json字符串
+			
+			$.post("/gwx/c/service/addSt",{"stInfo":jsonStr},function(json){
+				if(json.code=="200"){
+					layui.use('layer', function(){
+						var layer = layui.layer;
+						layer.msg("新增成功!");
+					});
+				}else if(json.code=="500"){
+					alert(json.msg);
+				}
+			},"json");
+		});
+		
+	
+	</script>
+	
+</html>

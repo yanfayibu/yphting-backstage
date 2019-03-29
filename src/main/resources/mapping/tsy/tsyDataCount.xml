@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyDataCountDao">
+
+
+	<!-- 提现统计按月年分组排序查询 -->
+
+	<select id="queryTiXianYearMonth"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(submitTime)) years,MONTH(submitTime) months,SUM(`money`)
+		money
+		FROM `putforward`
+
+		<where>
+			and `auditStatus`=2
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(submitTime))=#{year}
+			</if>
+			<!-- 月份查询 -->
+			<if test="month!=0">
+				and MONTH(submitTime)=#{month}
+			</if>
+
+		</where>
+		GROUP BY (YEAR(submitTime)),MONTH(submitTime)
+		ORDER BY
+		(YEAR(submitTime))DESC, MONTH(submitTime) DESC
+	</select>
+	
+	
+	<!-- 提现统计按年度分组排序查询总金额 -->
+
+	<select id="queryTiXianYear"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(submitTime)) years,MONTH(submitTime) months,SUM(`money`)
+		money
+		FROM `putforward`
+
+		<where>
+			and `auditStatus`=2
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(submitTime))=#{year}
+			</if>
+
+		</where>
+		GROUP BY (YEAR(submitTime))
+		ORDER BY
+		(YEAR(submitTime))DESC
+	</select>
+
+
+	<!-- 提现统计每月的记录 -->
+
+	<select id="queryTiXianMonth" resultType="Putforward">
+
+		SELECT * FROM `putforward`
+
+		<where>
+
+			`auditStatus`=2 AND YEAR(`submitTime`)=#{years} AND
+			MONTH(`submitTime`)=#{months}
+
+		</where>
+
+		ORDER BY `submitTime` DESC
+	</select>
+
+
+	<!-- 按银行分类提现区别 -->
+	<select id="queryTiXianBank" resultType="TsyTiXianBankVo">
+
+
+		SELECT `openBankName`,SUM(`money`) money
+		FROM `putforward`
+
+
+		<where>
+			`auditStatus`=2 AND YEAR(`submitTime`)=#{years} AND
+			MONTH(`submitTime`)=#{months}
+		</where>
+
+		GROUP BY `bankID`
+
+	</select>
+
+
+
+
+	<!-- 金币充值查询 -->
+	<select id="queryChongZhiYearMonth"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(`recordDate`)) years,MONTH(`recordDate`)
+		months,SUM(`recordInAndOut`)
+		money
+		FROM `goldnotes`
+
+		<where>
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(recordDate))=#{year}
+			</if>
+			<!-- 月份查询 -->
+			<if test="month!=0">
+				and MONTH(recordDate)=#{month}
+			</if>
+
+			`auditStatus`=2 and (`acquisitionMode`=5 OR `acquisitionMode`=6)
+
+		</where>
+
+		GROUP BY (YEAR(`recordDate`)),MONTH(`recordDate`)
+		ORDER BY
+		(YEAR(`recordDate`))DESC, MONTH(`recordDate`) DESC
+
+	</select>
+
+
+	<!-- 金币充值年度查询 -->
+	<select id="queryChongZhiYear"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(`recordDate`)) years,MONTH(`recordDate`)
+		months,SUM(`recordInAndOut`)
+		money
+		FROM `goldnotes`
+
+		<where>
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(recordDate))=#{year}
+			</if>
+			
+
+		and `auditStatus`=2 and (`acquisitionMode`=5 OR `acquisitionMode`=6)
+
+		</where>
+
+		GROUP BY (YEAR(`recordDate`))
+		ORDER BY
+		(YEAR(`recordDate`))DESC
+
+	</select>
+
+
+
+	<!-- 充值统计每月查询 -->
+
+	<select id="queryChongZhiMonth" resultType="TsyChongZiVo">
+
+		SELECT
+		u.`userName`,g.`acquisitionMode`,g.`recordDate`,g.`recordInAndOut`
+		FROM `goldnotes` g
+		INNER JOIN `user` u ON u.`userID`=g.`userID`
+
+		<where>
+
+
+			YEAR(g.`recordDate`)=#{years} AND
+			MONTH(g.`recordDate`)=#{months} and g.`auditStatus`=2 and
+			(g.`acquisitionMode`=5 OR
+			g.`acquisitionMode`=6)
+
+		</where>
+
+		ORDER BY g.`recordDate` DESC
+	</select>
+
+
+	<!-- 按充值类别区分 -->
+	<select id="queryChongZhiMode" resultType="TsyTiXianBankVo">
+
+
+		SELECT `acquisitionMode` as openBankName,SUM(`recordInAndOut`) money
+		FROM `goldnotes`
+
+		<where>
+
+			YEAR(`recordDate`)=#{years} AND
+			MONTH(`recordDate`)=#{months}
+			and
+			`auditStatus`=2 and
+			(`acquisitionMode`=5 OR
+			`acquisitionMode`=6)
+
+		</where>
+
+		GROUP BY `acquisitionMode`
+
+	</select>
+
+
+	<!-- 广告位费用统计 -->
+
+	<select id="queryGuangGaoYearMonth"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(`startTime`)) years,MONTH(`startTime`)
+		months,SUM((`price`*`rentAMonth`))
+		money
+		FROM `advertisementapply`
+
+		<where>
+
+			and `auditStatus`=2
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(startTime))=#{year}
+			</if>
+			<!-- 月份查询 -->
+			<if test="month!=0">
+				and MONTH(startTime)=#{month}
+			</if>
+
+		</where>
+
+		GROUP BY (YEAR(`startTime`)),MONTH(`startTime`)
+		ORDER BY
+		(YEAR(`startTime`))DESC, MONTH(`startTime`) DESC
+	</select>
+
+	<!-- 广告位费用年度统计 -->
+
+	<select id="queryGuanGaoYear"
+		resultType="TsyTiXianDataCountVo">
+
+		SELECT (YEAR(`startTime`)) years,MONTH(`startTime`)
+		months,SUM((`price`*`rentAMonth`))
+		money
+		FROM `advertisementapply`
+
+		<where>
+
+			and `auditStatus`=2
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(startTime))=#{year}
+			</if>
+
+		</where>
+
+		GROUP BY (YEAR(`startTime`))
+		ORDER BY
+		(YEAR(`startTime`))DESC
+	</select>
+
+
+	<!-- 广告费用统计每月查询 -->
+	<select id="queryGuangGaoMonth" resultType="TsyGuangGaoVO">
+
+
+		SELECT
+		a.sponsorNmae userName,ad.`atitle`,a.`price`,a.`rentAMonth`,a.`startTime`,a.`endTime`,SUM((a.`price`*a.`rentAMonth`))
+		money FROM `advertisementapply` a
+		
+		INNER JOIN `advertisement` ad ON ad.`aid`=a.`aid`
+
+		WHERE a.`auditStatus`=2
+		and YEAR(a.`startTime`)=#{years} AND
+		MONTH(a.`startTime`)=#{months}
+
+		GROUP BY a.`aaID`
+		ORDER BY a.`startTime`
+
+	</select>
+
+
+
+	<!-- 按广告位置类别区分 -->
+	<select id="queryGuangGaoMode" resultType="TsyTiXianBankVo">
+
+		SELECT
+		ad.`atitle`
+		openBankName,SUM((a.`price`*a.`rentAMonth`)) money FROM
+		`advertisementapply` a
+		INNER JOIN `advertisement` ad ON
+		ad.`aid`=a.`aid`
+
+		WHERE a.`auditStatus`=2 and
+		YEAR(a.`startTime`)=#{years} AND
+		MONTH(a.`startTime`)=#{months}
+
+		GROUP BY
+		a.`aid`
+		ORDER BY a.`startTime`
+
+	</select>
+
+
+
+	<!-- 退款手续费 -->
+
+	<select id="queryTuiKuanYearMonth"
+		resultType="TsyTiXianDataCountVo">
+
+
+		SELECT (YEAR(`applicationTime`)) years,MONTH(`applicationTime`)
+		months,SUM((`applyRefundMoney`-`ActualRefundMoney`))
+		money
+		FROM `refund`
+
+		<where>
+
+			and (`auditStatus`=2 OR `adminStatus`=2)
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(applicationTime))=#{year}
+			</if>
+			<!-- 月份查询 -->
+			<if test="month!=0">
+				and MONTH(applicationTime)=#{month}
+			</if>
+
+		</where>
+
+
+		GROUP BY (YEAR(`applicationTime`)),MONTH(`applicationTime`)
+		ORDER BY
+		(YEAR(`applicationTime`))DESC, MONTH(`applicationTime`) DESC
+
+	</select>
+
+	<!-- 退款手续费 -->
+
+	<select id="queryTuiKuanYear"
+		resultType="TsyTiXianDataCountVo">
+
+
+		SELECT (YEAR(`applicationTime`)) years,MONTH(`applicationTime`)
+		months,SUM((`applyRefundMoney`-`ActualRefundMoney`))
+		money
+		FROM `refund`
+
+		<where>
+
+			and (`auditStatus`=2 OR `adminStatus`=2)
+
+			<!-- 年份查询 -->
+			<if test="year!=0">
+				and (YEAR(applicationTime))=#{year}
+			</if>
+
+		</where>
+
+
+		GROUP BY (YEAR(`applicationTime`))
+		ORDER BY
+		(YEAR(`applicationTime`))DESC
+
+	</select>
+
+
+
+
+
+	<select id="queryTuiKuanMonth" resultType="TsyTuiKuanVo">
+
+		SELECT
+		u.`userName`,o.`orderID`,r.`refundExplain`,r.`applicationTime`,
+		r.`applyRefundMoney`,r.`ActualRefundMoney`,SUM(`applyRefundMoney`-`ActualRefundMoney`)
+		money
+		FROM
+		`refund` r
+		INNER JOIN `user` u ON u.`userID`=r.`userID`
+		INNER
+		JOIN `orders` o ON o.`orderID`=r.`orderID`
+		WHERE (r.`auditStatus`=2 OR
+		r.`adminStatus`=2) and  YEAR(r.`applicationTime`)=#{years} AND
+		MONTH(r.`applicationTime`)=#{months} 
+		GROUP BY `refundID`
+		ORDER BY `applicationTime` DESC
+
+
+	</select>
+
+
+	<select id="queryTuiKuanMode" resultType="TsyTiXianBankVo">
+
+		SELECT `point` openBankName,SUM((`applyRefundMoney`-`ActualRefundMoney`)) money FROM
+		`refund`
+		where YEAR(`applicationTime`)=#{years} AND
+		MONTH(`applicationTime`)=#{months} and
+		(`auditStatus`=2 OR `adminStatus`=2)
+		GROUP BY `point`
+
+	</select>
+
+</mapper>

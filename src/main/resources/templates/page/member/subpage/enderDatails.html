@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>商家入驻详情</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/MemberCss.css"/>
+	</head>
+	<body>
+		<div id="enderDatails">
+			<h2>商家入驻 </h2>
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<td>会员:</td>
+					<td colspan="3">{{user.userName}}</td>
+				</tr>
+				<tr>
+					<td>商家类别:</td>
+					<td>
+						<span v-if="user.merchantType==1">大陆商家用户</span>
+						<span v-else-if="user.merchantType==2">海外商家用户</span>
+					</td>
+					<td>服务类别:</td>
+					<td>{{user.firstServiceName}}&nbsp{{user.secondServiceName}}</td>
+				</tr>
+				<tr>
+					<td>店铺名称:</td>
+					<td>{{user.shopName}}</td>
+					<td>真实姓名:</td>
+					<td>{{user.userRealName}}</td>
+				</tr>
+				<tr>
+					<td>签名:</td>
+					<td colspan="3">{{user.signature}}</td>
+				</tr>
+				<tr>
+					<td>身份证/护照号码:</td>
+					<td colspan="3">
+						{{user.identityNumder}}
+					</td>
+				</tr>
+				<tr>
+					<td>商家店铺图片:</td>
+					<td colspan="3">
+						<img src="../../../images/alipay.jpg" width="80px"/>
+					</td>
+				</tr>
+				<tr>
+					<td>身份证正面:</td>
+					<td colspan="3">
+						<img src="/api/upload/2019-02-26/f4e50416b42449608677161c72c9e8be.png" width="80px"/>
+					</td>
+				</tr>
+				<tr>
+					<td>身份证反面:</td>
+					<td colspan="3">
+						<img src="../../../images/alipay.jpg" width="80px"/>
+					</td>
+				</tr>
+				<tr>
+					<td>手持身份证:</td>
+					<td colspan="3">
+						<img src="../../../images/alipay.jpg" width="80px"/>
+					</td>
+				</tr>
+				<tr>
+					<td>身份住址:</td>
+					<td colspan="3">
+						{{user.countryName}}&nbsp{{user.provincialName}}&nbsp{{user.cityName}}
+					</td>
+				</tr>
+				<tr>
+					<td>服务语言:</td>
+					<td>{{user.languageNameText}}</td>
+					<td>擅长专业:</td>
+					<td>{{user.majorNameText}}</td>
+				</tr>
+				<tr>
+					<td>所在城市:</td>
+					<td>{{user.livecityName}}</td>
+					<td>邮箱地址:</td>
+					<td>{{user.merchantEmail}}</td>
+				</tr>
+				<tr>
+					<td>联系电话:</td>
+					<td>{{user.merchantPhone}}</td>
+					<td>QQ:</td>
+					<td>{{user.qq}}</td>
+				</tr>
+				<tr>
+					<td>微信:</td>
+					<td>{{user.weChat}}</td>
+					<td>职业:</td>
+					<td>{{user.profession}}</td>
+				</tr>
+				<tr>
+					<td>身高:</td>
+					<td>{{user.height}}cm</td>
+					<td>星座:</td>
+					<td>{{user.constellation}}</td>
+				</tr>
+				<tr>
+					<td>年龄:</td>
+					<td>{{user.age}}</td>
+					<td>自我介绍:</td>
+					<td>{{user.selfIntroduction}}</td>
+				</tr>
+				<tr>
+					<td>商铺免费体验:</td>
+					<td>
+						<span v-if="user.experienceStatus">是</span>
+						<span v-else>否</span>
+					</td>
+					<td>商铺免费体验月数:</td>
+					<td>
+						<select class="form-control" v-model="user.experience">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<input class="btn btn-default" type="button" value="保存">
+						<input class="btn btn-default" type="button" value="返回" onclick="history.go(-1)">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+	</body>
+	<script src="../../../js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="../../../js/bootstrap.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../../js/vue.js"></script>
+	<script>
+		$(function() {
+			var enterId = window.sessionStorage.getItem("enterId");
+			enderDatails = new Vue({
+				el: "#enderDatails",
+				data: {
+					user: {}
+				},
+				methods: {
+					goToPage: function() {
+						$.ajax({
+							url: "/yl/getEnterById/"+enterId,
+							type: "post",
+							dataType: "json",
+							success: function(pageData) {
+								enderDatails.user = pageData;
+								//alert(JSON.stringify(pageData));
+							},
+							error: function() {
+								alert("入驻详情");
+							}
+						});
+					},
+					/* updateUser:function(){
+						$.ajax({
+							url:"/yl/updateVip",
+							type:"post",
+							data:JSON.stringify(MemberModify.user),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(map){
+								if(map.code==200){
+									alert("保存成功");
+								}else if(map.code==500){
+									alert("保存失败");
+								}
+							}
+						});
+					}, */
+				},
+				created: function() {
+					this.goToPage();
+				}
+			});
+		});
+	</script>
+</html>

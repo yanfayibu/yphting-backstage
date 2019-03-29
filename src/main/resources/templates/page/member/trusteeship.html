@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>商家托管</title>
+		<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/MemberCss.css"/>
+	</head>
+	<body>
+	<div id="trusteeship">
+		<div class="title">
+			<h3>商家托管</h3>
+			<div class="formdiv">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="exampleInputName2">用户昵称</label>
+						<input type="text" class="form-control" id="userName" placeholder="请输入会员昵称">
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName2">店铺名称</label>
+						<input type="text" class="form-control" id="shopName" placeholder="请输入店铺名称">
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName2">会员组</label>
+						<select class="form-control" id="merchantType">
+						  <option value="0">所有</option>
+						  <option value="1">大陆商家用户</option>
+						  <option value="2">海外商家用户</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="exampleInputName2">托管状态</label>
+						<select class="form-control" id="tuoguan">
+						  <option value="-1">所有</option>
+						  <option value="0">未审核</option>
+						  <option value="1">托管中</option>
+						</select>
+					</div>
+					<button type="submit" class="btn btn-default">搜索</button>
+				</form>
+			</div>
+		</div>
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>用户昵称</th>
+					<th>商铺名称</th>
+					<th>托管提交时间</th>
+					<th>托管通过时间</th>
+					<th>托管开始时间</th>
+					<th>托管到期时间</th>
+					<th>托管状态</th>
+					<th>月数</th>
+					<th>托管费用(金币)</th>
+					<th>会员组</th>
+					<th>店铺状态</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="(tmp,index) in user.list">
+					<td>{{index}}</td>
+					<td>{{tmp.username}}</td>
+					<td>{{tmp.shopname}}</td>
+					<td>{{tmp.applicationtime}}</td>
+					<td>{{tmp.audittime}}</td>
+					<td>{{tmp.trusteeshipstarttime}}</td>
+					<td>{{tmp.trusteeshipendtime}}</td>
+					<td>
+						<!-- {{tmp.auditstatus}}审核
+						{{tmp.trusteeship}}托管 -->
+						<span v-if="tmp.auditstatus==1" style="color: red;">待审核</span>
+						<span v-else-if="tmp.auditstatus==3">拒绝</span>
+						<span v-else>
+							<span v-if="tmp.trusteeship==true">托管中</span>
+							<span v-else-if="tmp.trusteeship==false" style="color: #F08080;">暂停</span>
+						</span>
+					</td>
+					<td>{{tmp.trusteeshipmonth}}</td>
+					<td>
+						{{(tmp.trusteeshipmonth-1)*100}}
+					</td>
+					<td>
+						<span v-if="tmp.merchanttype==1">大陆商家用户</span>
+						<span v-else-if="tmp.merchanttype==2">海外商家用户</span>
+					</td>
+					<td>
+						<span v-if="tmp.businessstate==1">营业</span>
+						<span v-else-if="tmp.businessstate==2">暂停</span>
+						<span v-else>关闭</span>
+					</td>
+					<td>
+						<span v-if="tmp.trusteeship==true">
+							<a href="#">修改</a>&nbsp|
+							<a href="#">托管</a>
+						</span>
+						<span v-else-if="tmp.trusteeship==false">
+							<a href="#">修改</a>
+						</span>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="15">
+						<nav style="display: inline-block;">
+							<ul class="pager">
+								<li>
+									<a href="javascript:void(0)" id="home" @click="goToIndex()">首页</a>
+								</li>
+								<li>
+									<a href="javascript:void(0)" id="Previous" @click="goToPre()">上一页</a>
+								</li>
+								<li>
+									<a href="javascript:void(0)" id="Next" @click="goToNext()">下一页</a>
+								</li>
+								<li>
+									<a href="javascript:void(0)" id="last" @click="goToEnd()">尾页</a>
+								</li>
+							</ul>
+						</nav>
+						第<span>1</span>页&nbsp;/共<label>10</label>页
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+	</body>
+	<script src="../../js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../js/vue.js"></script>
+	<script type="text/javascript" src="../../layui/layui.js"></script>
+	<script>
+		$(function() {
+			trusteeship = new Vue({
+				el: "#trusteeship",
+				data: {
+					user: {}
+				},
+				methods: {
+					goToPage: function(p,s) {
+						var userName= $("#userName").val();
+						var shopName= $("#shopName").val();
+						var merchantType= $("#merchantType").val();
+						var tuoguan= $("#tuoguan").val();
+						if(userName==""){
+							userName=0;
+						}
+						if(shopName==""){
+							shopName=0;
+						}
+						$.ajax({
+							url: "/yl/getTrusteeship/"+userName+"/"+shopName+"/"+merchantType+"/"+tuoguan+"/"+p+"/"+s,
+							type: "get",
+							dataType: "json",
+							success: function(pageData) {
+								trusteeship.user = pageData;
+								alert(JSON.stringify(pageData));
+							},
+							error: function() {
+								alert("商家托管");
+							}
+						});
+					},
+					goToIndex : function() {
+						this.goToPage(this.user.firstPage,2);
+					},
+					goToNext : function() {
+						if (this.user.hasNextPage) {
+							this.goToPage(this.user.nextPage,2);
+						} else {
+							layer.alert('没有下一页了。。。', {icon: 2});
+						}
+					},
+					goToPre : function() {
+						if (this.user.hasPreviousPage) {
+							this.goToPage(this.user.prePage,2);
+						} else {
+							layer.alert('没有上一页了。。。', {icon: 2});
+						}
+					},
+					goToEnd : function() {
+						this.goToPage(this.user.lastPage,2);
+					},
+				    /* jump:function (serviceID){
+						var serviceID = window.sessionStorage.setItem("serviceID",serviceID);
+						location.href="subpage/recommendDetails.html";
+					},  */
+				},
+				created: function() {
+					this.goToPage(1,2);
+					
+				}
+			});
+			
+		});
+		
+	</script>
+</html>

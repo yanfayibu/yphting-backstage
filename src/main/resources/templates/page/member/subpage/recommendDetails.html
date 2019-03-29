@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>推荐详情</title>
+		<link rel="stylesheet" type="text/css" href="../../../css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="../css/MemberCss.css"/>
+	</head>
+	<body>
+		<div id="recommendDetails">
+			<h2>商家服务推荐信息</h2>
+		<table class="table table-bordered">
+			<tbody>
+				<tr>	
+					<td>商家信息:</td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>店铺名称:</td>
+					<td>{{user.shopname}}</td>
+					<td>保证金:</td>
+					<td>{{user.guaranteemoney}}</td>
+				</tr>
+				<tr>
+					<td>所在城市:</td>
+					<td colspan="3"></td>
+				</tr>
+				<tr>
+					<td>QQ:</td>
+					<td>{{user.qq}}</td>
+					<td>微信:</td>
+					<td>{{user.wechat}}</td>
+				</tr>
+				<tr>
+					<td>店铺状态:</td>
+					<td colspan="3">
+						<span v-if="user.businessstate==1">营业</span>
+						<span v-else-if="user.businessstate==2">暂停</span>
+						<span v-else>关闭</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table table-bordered">
+			<tbody>
+				<tr>
+					<td>注册时间:</td>
+					<td>{{user.userregistrationtime}}</td>
+					<td>注册IP:</td>
+					<td>{{user.registerip}}</td>
+				</tr>
+				<tr>
+					<td>最后登录时间:</td>
+					<td>{{user.recententry}}</td>
+					<td>最后登录IP:</td>
+					<td>{{user.lastentry}}</td>
+				</tr>
+				<tr>
+					<td>服务类别:</td>
+					<td colspan="3">{{user.stname}}</td>
+				</tr>
+				<tr>
+					<td>服务类别图片:</td>
+					<td colspan="3"><img src="../../../images/alipay.jpg" width="120px"/></td>
+				</tr>
+				<tr>
+					<td>店铺服务推荐:</td>
+					<td colspan="3">
+						<input type="radio" name="recommend" value="false" v-model="user.recommendbool"/>不推荐
+						<input type="radio" name="recommend" value="true" v-model="user.recommendbool"/>推荐
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4" class="text-center">
+						<input class="btn btn-default" type="button" value="保存">
+						<input class="btn btn-default" type="button" value="返回" onclick="history.go(-1)">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+	</body>
+	<script src="../../../js/jquery-1.12.4.js" type="text/javascript"></script>
+	<script src="../../../js/bootstrap.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../../../js/vue.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			var serviceID= window.sessionStorage.getItem("serviceID");
+			recommendDetails = new Vue({
+				el: "#recommendDetails",
+				data: {
+					user: {}
+				},
+				methods: {
+					goToPage: function() {
+						$.ajax({
+							url: "/yl/getRecommendById/"+serviceID,
+							type: "get",
+							dataType: "json",
+							success: function(pageData) {
+								recommendDetails.user = pageData;
+								alert(JSON.stringify(pageData));
+							},
+							error: function() {
+								alert("推荐详情");
+							}
+						});
+					},
+					/* updateUser:function(){
+						$.ajax({
+							url:"/yl/updateVip",
+							type:"post",
+							data:JSON.stringify(MemberModify.user),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(map){
+								if(map.code==200){
+									alert("保存成功");
+								}else if(map.code==500){
+									alert("保存失败");
+								}
+							}
+						});
+					}, */
+				},
+				created: function() {
+					this.goToPage();
+				}
+			});
+		})
+	</script>
+</html>

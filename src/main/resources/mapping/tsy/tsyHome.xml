@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyHomeDao">
+
+
+	<!-- 1查询提现待审核的数量 -->
+
+	<select id="selectCountPutforward" resultType="int">
+
+		SELECT COUNT(*)
+		FROM `putforward` WHERE `auditStatus`=1
+
+	</select>
+
+
+	<!-- 2查询申请鉴定待审核的数量 -->
+
+	<select id="selectCountAppraisalapply" resultType="int">
+
+		SELECT
+		COUNT(*)
+		FROM `appraisalapply` WHERE `auditStatus`=1
+
+	</select>
+
+
+	<!-- 3查询商家入驻待审核的数量 -->
+
+	<select id="selectCountUser" resultType="int">
+
+		SELECT COUNT(*) FROM `user` WHERE `auditStatus`=1		<!-- 商家入驻待审核 -->
+
+	</select>
+
+
+	<!-- 4查询服务待审核的数量 -->
+
+	<select id="selectCountServices" resultType="int">
+
+		SELECT COUNT(*)
+		FROM
+		`services` WHERE `auditStatus`=1
+
+	</select>
+
+
+
+	<!-- 5查询管理员介入申请的数量 -->
+
+	<select id="selectCountOrders" resultType="int">
+
+		SELECT COUNT(*) FROM
+		`refund` w
+		INNER JOIN `orders` o ON o.`orderID`=w.`orderID`
+		WHERE o.`refundstatus`=3
+
+	</select>
+
+
+	<!-- 6查询帖子待审核的数量 -->
+
+	<select id="selectCountPost" resultType="int">
+
+		SELECT COUNT(*)
+		FROM
+		`post` WHERE `auditStatus`=1
+
+	</select>
+
+
+</mapper>

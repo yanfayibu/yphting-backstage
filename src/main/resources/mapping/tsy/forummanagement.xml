@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <!-- 论坛板块管理(帖子类别)表 -->
+
+<mapper namespace="com.accp.dao.tsy.TsyForummanagementDao">
+
+
+	<!-- 带条件查询消息 -->
+
+	<select id="queryAllForummanagement" resultType="Forummanagement">
+
+		SELECT * FROM `forummanagement` 
+
+		<where>
+
+			<if test="fmId!=0">
+				AND `fmID`=#{fmId}
+			</if>
+			
+		</where>
+		 ORDER BY pid
+	</select>
+
+</mapper>

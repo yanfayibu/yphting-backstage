@@ -163,6 +163,289 @@ public class ExcelToolClass {
 		            cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("最后登入时间").toString()+""));
 		        }
 	    }
+	  
+	    /**
+	     * 
+	     * @title: createColumHeader
+	     * @date:2019年3月21日 @time:下午7:17:34
+	     * @param listInfo
+	     * @description:提现报表导出
+	     */
+	    public void createColumHeaderTiXianBook(List<Map<String,Object>> listInfo) {
+	    	
+	    	
+	    	
+	    	// 定义单元格格式，添加单元格表样式，并添加到工作簿
+	    	HSSFCellStyle cellStyle = wb.createCellStyle();
+	    	cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 指定单元格居中对齐
+	    	cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 指定单元格垂直居中对齐
+	    	cellStyle.setWrapText(true);// 指定单元格自动换行
+	    	
+	    	
+	    	
+	    	// 单元格字体
+	    	HSSFFont font = wb.createFont();
+	    	font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    	font.setFontName("宋体");//字体
+	    	font.setFontHeightInPoints((short)10);//设置字体
+	    	cellStyle.setFont(font);
+	    	
+	    	// 设置单元格背景色
+	    	//cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    	//cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	    	
+	    	HSSFCell cell3 = null;
+	    	
+	    	for (int i = 0; i < listInfo.size(); i++) {
+	    		
+	    		//循环插入数据
+	    		HSSFRow row2 = sheet.createRow(i+2);   
+	    		row2.setHeight((short) 400);// 指定行高
+	    		cell3 = row2.createCell(0);
+	    		cell3.setCellStyle(cellStyle);
+	    		
+	    		System.out.println("-----------"+listInfo.get(i).get("序号").toString());
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("序号").toString()));
+	    		
+	    		cell3 = row2.createCell(1);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("提现人姓名").toString()));
+	    		
+	    		cell3 = row2.createCell(2);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("卡号").toString()));
+	    		
+	    		cell3 = row2.createCell(3);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("银行户口").toString()+""));
+	    		
+	    		cell3 = row2.createCell(4);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("提现时间").toString()));
+	    		
+	    		cell3 = row2.createCell(5);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("提现金额").toString()+""));
+	    		
+	    	}
+	    }
+	    /**
+	     * 
+	     * @title: createColumHeader
+	     * @date:2019年3月21日 @time:下午7:17:34
+	     * @param listInfo
+	     * @description:充值报表导出
+	     */
+	    public void createColumHeaderChongZhiBook(List<Map<String,Object>> listInfo) {
+	    	
+	    	
+	    	
+	    	// 定义单元格格式，添加单元格表样式，并添加到工作簿
+	    	HSSFCellStyle cellStyle = wb.createCellStyle();
+	    	cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 指定单元格居中对齐
+	    	cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 指定单元格垂直居中对齐
+	    	cellStyle.setWrapText(true);// 指定单元格自动换行
+	    	
+	    	
+	    	
+	    	// 单元格字体
+	    	HSSFFont font = wb.createFont();
+	    	font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    	font.setFontName("宋体");//字体
+	    	font.setFontHeightInPoints((short)10);//设置字体
+	    	cellStyle.setFont(font);
+	    	
+	    	// 设置单元格背景色
+	    	//cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    	//cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	    	
+	    	HSSFCell cell3 = null;
+	    	
+	    	for (int i = 0; i < listInfo.size(); i++) {
+	    		
+	    		//循环插入数据
+	    		HSSFRow row2 = sheet.createRow(i+2);   
+	    		row2.setHeight((short) 400);// 指定行高
+	    		cell3 = row2.createCell(0);
+	    		cell3.setCellStyle(cellStyle);
+	    		
+	    		System.out.println("-----------"+listInfo.get(i).get("序号").toString());
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("序号").toString()));
+	    		
+	    		cell3 = row2.createCell(1);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("充值姓名").toString()));
+	    		
+	    		cell3 = row2.createCell(2);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("充值类型").toString()));
+	    		
+	    		cell3 = row2.createCell(3);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("充值时间").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(4);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("充值金额").toString()+""));
+	    		
+	    	}
+	    }
+	    /**
+	     * 
+	     * @title: createColumHeader
+	     * @date:2019年3月21日 @time:下午7:17:34
+	     * @param listInfo
+	     * @description:广告费用报表导出
+	     */
+	    public void createColumHeaderGuanGaoBook(List<Map<String,Object>> listInfo) {
+	    	
+	    	
+	    	
+	    	// 定义单元格格式，添加单元格表样式，并添加到工作簿
+	    	HSSFCellStyle cellStyle = wb.createCellStyle();
+	    	cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 指定单元格居中对齐
+	    	cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 指定单元格垂直居中对齐
+	    	cellStyle.setWrapText(true);// 指定单元格自动换行
+	    	
+	    	
+	    	
+	    	// 单元格字体
+	    	HSSFFont font = wb.createFont();
+	    	font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    	font.setFontName("宋体");//字体
+	    	font.setFontHeightInPoints((short)10);//设置字体
+	    	cellStyle.setFont(font);
+	    	
+	    	// 设置单元格背景色
+	    	//cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    	//cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	    	
+	    	HSSFCell cell3 = null;
+	    	
+	    	for (int i = 0; i < listInfo.size(); i++) {
+	    		
+	    		//循环插入数据
+	    		HSSFRow row2 = sheet.createRow(i+2);   
+	    		row2.setHeight((short) 400);// 指定行高
+	    		cell3 = row2.createCell(0);
+	    		cell3.setCellStyle(cellStyle);
+	    		
+	    		System.out.println("-----------"+listInfo.get(i).get("序号").toString());
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("序号").toString()));
+	    		
+	    		cell3 = row2.createCell(1);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("租用人姓名").toString()));
+	    		
+	    		cell3 = row2.createCell(2);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("广告位置").toString()));
+	    		
+	    		cell3 = row2.createCell(3);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("广告单价").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(4);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("租用月数").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(5);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("开始时间").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(6);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("结束时间").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(7);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("总金额").toString()+""));
+	    		
+	    	}
+	    }
+	    /**
+	     * 
+	     * @title: createColumHeader
+	     * @date:2019年3月21日 @time:下午7:17:34
+	     * @param listInfo
+	     * @description:退款手续费用报表导出
+	     */
+	    public void createColumHeaderTuiKuanBook(List<Map<String,Object>> listInfo) {
+	    	
+	    	
+	    	
+	    	// 定义单元格格式，添加单元格表样式，并添加到工作簿
+	    	HSSFCellStyle cellStyle = wb.createCellStyle();
+	    	cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 指定单元格居中对齐
+	    	cellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 指定单元格垂直居中对齐
+	    	cellStyle.setWrapText(true);// 指定单元格自动换行
+	    	
+	    	
+	    	
+	    	// 单元格字体
+	    	HSSFFont font = wb.createFont();
+	    	font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    	font.setFontName("宋体");//字体
+	    	font.setFontHeightInPoints((short)10);//设置字体
+	    	cellStyle.setFont(font);
+	    	
+	    	// 设置单元格背景色
+	    	//cellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+	    	//cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+	    	
+	    	HSSFCell cell3 = null;
+	    	
+	    	for (int i = 0; i < listInfo.size(); i++) {
+	    		
+	    		//循环插入数据
+	    		HSSFRow row2 = sheet.createRow(i+2);   
+	    		row2.setHeight((short) 400);// 指定行高
+	    		cell3 = row2.createCell(0);
+	    		cell3.setCellStyle(cellStyle);
+	    		
+	    		
+	    		System.out.println("-----------"+listInfo.get(i).get("序号").toString());
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("序号").toString()));
+	    		
+	    		cell3 = row2.createCell(1);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("退款人姓名").toString()));
+	    		
+	    		cell3 = row2.createCell(2);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("单号").toString()));
+	    		
+	    		cell3 = row2.createCell(3);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString(listInfo.get(i).get("退款原因").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(4);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("退款时间").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(5);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("申请退款金额").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(6);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("实际退款金额").toString()+""));
+	    		
+	    		
+	    		cell3 = row2.createCell(7);
+	    		cell3.setCellStyle(cellStyle);
+	    		cell3.setCellValue(new HSSFRichTextString( listInfo.get(i).get("手续费金额").toString()+""));
+	    		
+	    	}
+	    }
 	    /**
 	     * 设置报表标题
 	     *

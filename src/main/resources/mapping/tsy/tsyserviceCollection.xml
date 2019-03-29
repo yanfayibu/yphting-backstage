@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyServiceCollerctionDao">
+
+
+	<!-- 带条件查询收藏店铺 -->
+
+	<select id="queryAllServiceCollerction"
+		resultType="TsyServiceCollectionVo">
+
+		SELECT `serColleID`,`userName`,`serviceTitle`,`collectionTime`
+		FROM `servicecollection` se
+		INNER JOIN `user` us ON se.`userID`=us.`userID`
+		INNER JOIN `services` sv ON sv.`serviceID`=se.`serviceID`
+
+
+		<where>
+
+			<!-- 用户名 -->
+			<if test="userName!=null and !userName.equals('@@@66*')">
+
+				and us.`userName` LIKE '%${userName}%'
+
+			</if>
+
+			<!-- 被收藏的帖子标题 -->
+			<if test="title!=null and !title.equals('@@@66*')">
+
+				and se.`serviceTitle` LIKE '%${title}%'
+
+			</if>
+		</where>
+		ORDER BY `collectionTime` DESC
+	</select>
+
+</mapper>

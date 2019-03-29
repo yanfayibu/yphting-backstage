@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.accp.dao.yl.IlxtDao">
+    	<select id="queryAll" resultType="user">
+    		select * from `user`
+    	</select>
+    	
+    	<select id="queryByName" resultType="user">
+    		select * from `user` where userName like '%${userName}%'
+    	</select>
+    	
+    	<select id="queryByUserId" resultType="user">
+    		select * from `user` where userID =#{userId};
+    	</select>
+    	
+    	<select id="queryBusiness" resultType="user">
+    		select * from `user` where merchantType!=0
+    	</select>
+    	
+    	<select id="queryByBusName" resultType="user">
+    		select * from `user`
+    		<where>
+    		and  merchantType!=0
+    		<if test="userName!='' and userName!='null'">
+    			and userName like '%${userName}%'
+    		</if>
+    		<if test="shopName!='null' and shopName!=''">
+    			and shopName like '%${shopName}%'
+    		</if>
+    		<if test="merchantType!=3">
+    			and merchantType = #{merchantType}
+    		</if>	
+    		</where>
+    	</select> 
+    	
+    	<select id="queryByEnter" resultType="user">
+    		select * from `user` 
+    		<where>
+    			and  merchantType!=0
+    			<if test="userName!='' and userName!='null' ">
+    				and userName like '%${userName}%'
+    			</if>
+    			<if test="merchantType!=3">
+    				and merchantType = #{merchantType}
+    			</if>
+    			<if test="auditState!=4">
+    				and auditStatus =#{auditState}
+    			</if>
+    		</where>
+    	</select>
+    	
+    	<update id="updateUser">
+    		UPDATE `user` SET userRealName=#{user.userRealName},userSex=#{user.userSex},auditStatus=#{user.auditStatus},mailboxVerification=#{user.mailboxVerification},businessState=#{user.businessState},
+    		reason =#{user.reason}
+    		where userID =#{user.userID}
+    	</update>
+    	
+    	<select id="queryBusinessById" resultType="com.accp.vo.lxt.UserVo">
+    		SELECT *,s1.stName AS serviceFirstName ,s2.`stName` AS serviceSecondName,sh.`mergerName` FROM `user` u
+			LEFT JOIN serviceType s1 ON s1.`stid` =u.`firstServiceID`
+			LEFT JOIN serviceType s2 ON s2.`stid` =u.`secondServiceID`
+			LEFT JOIN sharea sh ON sh.`areaID` = u.`cityID` where u.`userID` =#{userId}
+    	</select>
+    	
+    	<update id="updateGuaranteeMoney">
+    		update `user` set guaranteeMoney =0 where userID =#{userId}
+    	</update>
+    	
+    	<select id="queryGoldRecord" resultType="com.accp.vo.lxt.GoldVo">
+    		SELECT recordID,u.userName,acName,recordDate,recordDescribe,recordInAndOut,g.auditStatus FROM goldnotes AS g
+			LEFT JOIN `user` u ON g.`userID` =u.`userID`  
+			LEFT JOIN `acquisitionType` a ON a.`id` = g.`acquisitionMode`
+			<where>
+				<if test="userName != 'null' and userName !=''">
+					and u.userName like '%${userName}%'
+				</if>
+			</where>
+			 ORDER BY recordDate DESC 
+    	</select>
+    	
+    	<select id="queryIntegral" resultType="com.accp.vo.lxt.IntegralVo">
+    		SELECT IRID,u.`userName`,inName,IRDate,IRDescribe,recordInAndOut,r.auditStatus FROM integralrecord r
+			LEFT JOIN integralSpec s ON s.id = r.integralID
+			LEFT JOIN `user` u ON u.`userID` =r.userID
+			<where>
+				<if test="userName !='null' and userName!='' ">
+					and u.userName like '%${userName}%'
+				</if>
+			</where>
+			ORDER BY IRDate DESC 
+    	</select>
+    	
+    	<select id="queryAppraisal" resultType="com.accp.vo.lxt.AppraisalVo">
+    		SELECT applyID,u.`userName`,s.`stName`,a.`name`,a.`sex`,a.`phone`,a.submitTime,a.`auditStatus`,a.`auditTime`,a.`age`,a.`height`,a.`constellation`,a.`visaType`,a.documentType,a.certificates,a.vehicle,
+			a.guideCard,a.inKorea,a.email,a.country,a.provincialID,a.cityID,a.detailed FROM AppraisalApply a
+			LEFT JOIN `user` u ON u.`userID` =a.`userID`
+			LEFT JOIN `servicetype` s ON s.`stid` =a.`stid`
+			<where>
+				<if test="userName!='' and userName!='null'">
+					and u.userName like '%${userName}%'
+				</if>
+				<if test="auditStatus!=0">
+					and a.auditStatus = #{auditStatus}
+				</if>
+			</where>
+    	</select>
+    	
+    	<select id="queryAppraisalById" resultType="com.accp.vo.lxt.AppraisalVo">
+    		SELECT * FROM AppraisalApply a
+			LEFT JOIN `user` u ON u.`userID` =a.`userID`
+			LEFT JOIN `servicetype` s ON s.`stid` =a.`stid` 
+			where applyID =#{aid}
+    	</select>
+    	
+    	<update id="updateAppraisal">
+    		update AppraisalApply set auditStatus=#{Appraisal.auditStatus},adminOpinion=#{Appraisal.adminOpinion},auditTime=NOW() 
+    		where applyID =#{Appraisal.applyID}
+    	</update>
+    	
+    	<select id="queryCommentList" resultType="com.accp.vo.lxt.CommentVo">	
+			SELECT e.serviceAppraiseID,u.userName,s.serviceTitle,e.serviceAppraiseContent,
+    			e.serviceAppraiseDate FROM evaluationservice AS e
+				LEFT JOIN services s ON e.`serviceID`=s.`serviceID`
+				LEFT JOIN `user` u ON u.`userID` =e.`userID`
+				<where>
+					<if test="userName!='null' and userName!='' ">
+						and u.userName like '%${userName}%'
+					</if>
+					<if test="title!='null' and title!=''">
+						and s.serviceTitle like '%${title}%'
+					</if>
+				</where>
+    	</select>
+    	
+    	<delete id="DeleteComment">
+    		DELETE FROM evaluationservice WHERE serviceAppraiseID =#{id};
+    	</delete>
+    	
+    	<select id="queryReCommend" resultType="com.accp.vo.lxt.ServiceVo">
+    		SELECT serviceID,userName,shopName,stName,merchantType,merchantPhone,businessState,recommendBool,guaranteeMoney
+			qq,weChat,registerIP,lastEntry,userRegistrationTime,recentEntry,serviceCoverImg FROM `services` s
+			LEFT JOIN `user` u ON s.`userID` =u.`userID`
+			LEFT JOIN servicetype se ON se.stid =s.`stid` 
+			<where>
+				and merchantType !=0
+				<if test="userName !='' and userName !='null' ">
+					and userName like '%${userName}%'
+				</if>
+				<if test="shopName!='' and shopName !='null' ">
+					and shopName like '%${shopName}%'
+				</if>
+				<if test="merchantType !=3 ">
+					and merchantType = #{merchantType}
+				</if>
+				<if test="recommendBool !=3">
+					and recommendBool =#{recommendBool}
+				</if>
+			</where> 
+    	</select>
+    	
+    	<select id="queryReCommendById" resultType="com.accp.vo.lxt.ServiceVo">
+    		SELECT serviceID,userName,shopName,stName,merchantType,merchantPhone,businessState,recommendBool,guaranteeMoney
+			qq,weChat,registerIP,lastEntry,userRegistrationTime,recentEntry,serviceCoverImg FROM `services` s
+			LEFT JOIN `user` u ON s.`userID` =u.`userID`
+			LEFT JOIN servicetype se ON se.stid =s.`stid`
+			where serviceID =#{id} 
+    	</select>
+    	
+    	<update id="updateSerices">
+    		update services set recommendBool =#{services.recommendBool} where serviceID =#{services.serviceID}
+    	</update>
+    	
+    	<select id="queryRecharge" resultType="com.accp.vo.lxt.GoldVo">
+    		SELECT recordID,u.userName,acName,recordDate,recordDescribe,recordInAndOut,g.auditStatus FROM goldnotes AS g
+    		LEFT JOIN `user` u ON u.`userID` =g.`userID` 
+			LEFT JOIN acquisitiontype a ON a.`id` =g.`acquisitionMode`
+			<where>
+				(acquisitionMode=5 OR acquisitionMode=6)
+				<if test="userName!='' and userName !='null'">
+					and userName like '%${userName}%'
+				</if>
+				<if test="yearDate !='' and yearDate!='null'">
+					AND YEAR(recordDate)=#{yearDate} 
+				</if>
+				<if test="monthDate!='' and monthDate!='null'">
+					and Month(recordDate) =#{monthDate}
+				</if>
+			</where> 
+    	</select>
+    	
+    	<select id="queryWithdrawal" resultType="com.accp.vo.lxt.PutforwardVo">
+    		SELECT pfID,userName,userRealName,putName,p.bankAccount,bankName,p.submitTime,p.auditTime,p.money,p.auditStatus,adminOpinion FROM putforward p
+			LEFT JOIN `putforwardrecord` pu ON pu.`pfrID` =p.`pfID`
+			LEFT JOIN `banktype` b ON b.`bankID` =p.`bankID`
+			LEFT JOIN `user` u ON u.`userID` = p.`userID`
+			<where>
+				<if test="userName!='' and userName !='null'">
+					and userName like '%${userName}%'
+				</if>
+				<if test="yearDate !='' and yearDate!='null'">
+					AND YEAR(p.submitTime)=#{yearDate} 
+				</if>
+				<if test="monthDate!='' and monthDate!='null'">
+					and Month(p.submitTime) =#{monthDate}
+				</if>
+			</where>
+    	</select>
+    	
+    	<update id="updatewithdrawal">
+    		update putforward set auditStatus=#{putforward.auditStatus},auditTime=NOW() where pfID =#{putforward.pfID};
+    		update putforwardrecord set adminOpinion=#{putforward.adminOpinion},completeTime=NOW() where pfrID=#{putforward.pfID};
+    	</update>
+    	
+    	<select id="queryWithById" resultType="com.accp.vo.lxt.PutforwardVo">
+    		SELECT pfID,userName,userRealName,putName,p.bankAccount,bankName,p.submitTime,p.auditTime,p.money,p.auditStatus,adminOpinion FROM putforward p
+			LEFT JOIN `putforwardrecord` pu ON pu.`pfrID` =p.`pfID`
+			LEFT JOIN `banktype` b ON b.`bankID` =p.`bankID`
+			LEFT JOIN `user` u ON u.`userID` = p.`userID` 
+			where pfID =#{id};
+    	</select>
+    	
+    	<select id="queryIncome" resultType="int">
+    		SELECT IFNULL(SUM(recordInAndOut),0) FROM goldnotes
+    		<where>
+    		(acquisitionMode =5 OR acquisitionMode =6)
+    			<if test="yearDate !='' and yearDate !='null'">
+    				and YEAR(recordDate) =#{yearDate}
+    			</if>
+    			<if test="monthDate !='' and monthDate!='null'">
+    				and MONTH(recordDate) =#{monthDate}
+    			</if>
+    		</where>
+    	</select>
+    	
+    	<select id="queryExpenditure" resultType="int">
+    		SELECT IFNULL(SUM(money),0) FROM putforward   
+    		<where>
+    		auditStatus !=3
+    			<if test="yearDate !='' and yearDate !='null'">
+    				and YEAR(submitTime) =#{yearDate}
+    			</if>
+    			<if test="monthDate !='' and monthDate!='null'">
+    				and MONTH(submitTime) =#{monthDate}
+    			</if>
+    		</where>
+    	</select>
+    	
+    	<select id="queryseCollection" resultType="com.accp.vo.lxt.ServiceCollectionVo">
+    		SELECT serColleID,stName,userName,serviceTitle,collectionTime FROM servicecollection sc 
+			LEFT JOIN services se  ON se.`serviceID` =sc.`serviceID`
+			LEFT JOIN servicetype st ON st.stid =se.`stid`
+			LEFT JOIN `user` u ON u.`userID` =sc.`userID`
+			<where>
+				<if test="userName !='' and userName !='null'">
+					and userName like '%${userName}%'
+				</if>
+				<if test="title!='' and title !='null'">
+					and serviceTitle like '%${title}%'
+				</if>
+				<if test="stid !=0">
+					and st.stid =#{stid}
+				</if>
+			</where>
+			ORDER BY collectionTime
+    	</select>
+    	
+    	<select id="queryTypelist" resultType="servicetype">
+    		SELECT stid,stName FROM  servicetype
+			WHERE ISNULL(stPid)
+    	</select>
+    	
+    	<select id="querypoCollection" resultType="com.accp.vo.lxt.PostcollectionVo">
+    		SELECT pcID,userName,po.`title`,pe.`collectionTime` FROM postcollection pe
+			LEFT JOIN post po ON pe.`pcID`=po.`postID`
+			LEFT JOIN `user` u ON u.`userID` =pe.`userID`
+			<where>
+				<if test="userName!='' and userName !='null'">
+					and userName like '%${userName}%'
+				</if>
+				<if test="title!='' and title !='null'">
+					and title like '%{title}%'
+				</if>	
+			</where>
+    	</select>
+    	
+    	<select id="querybsCollection" resultType="com.accp.vo.lxt.BusinessCollection">
+    		SELECT collectID,u.userName,us.`userName` AS businessName,us.shopName,collectionTime FROM merchantcollection m
+			LEFT JOIN `user` u ON u.`userID` =m.`userID`
+			LEFT JOIN `user` us ON us.`userID` = m.`merchantOrServiceByID`
+			<where>
+				<if test="shopName !='' and shopName='null'">
+					and us.shopName LIKE '%${shopName}%'
+				</if>
+				<if test="stid !=0">
+					and (us.firstServiceID =#{stid} OR us.`secondServiceID` =#{stid})
+				</if>
+				<if test="merchanType !=0">
+					and us.merchanType =#{merchanType}
+				</if>
+			</where>
+    	</select>
+    </mapper>

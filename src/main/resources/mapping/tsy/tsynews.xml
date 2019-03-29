@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.accp.dao.tsy.TsyNewsDao">
+
+
+	<!-- 带条件查询消息 -->
+
+	<select id="queryAllNews" resultType="TsyNewsVo">
+
+		SELECT `newsID`,us.`userName` AS theSenderName,uss.`userName` AS
+		addResseeName,`content`,`sendingTime`
+		FROM `news`
+		INNER JOIN `user` us
+		ON us.`userID`=news.`theSender`
+		INNER JOIN `user` uss ON
+		uss.`userID`=news.`addRessee`
+
+		<where>
+
+			and `news`.`newsType`=2 
+			
+			<if test="newsId!=0">
+				AND `news`.`newsID`=#{newsId}
+			</if>
+			
+			<if test="theSenderName!=null and !theSenderName.equals('@@@66*')">
+				
+					and	us.`userName` LIKE '%${theSenderName}%'
+				
+			</if>
+			
+			<if test="addResseeName!=null and !addResseeName.equals('@@@66*')">
+				
+					and	uss.`userName` LIKE '%${addResseeName}%'
+				
+			</if>
+		</where>
+		ORDER BY `sendingTime` DESC
+	</select>
+
+</mapper>

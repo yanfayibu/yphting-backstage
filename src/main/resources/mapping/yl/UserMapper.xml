@@ -4,6 +4,7 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.accp.dao.yl.IUserDao">
+	<!-- 会员操作块 -->
 	<select id="selectUserList" resultType="User">
 		select * from user
 		<where>
@@ -13,6 +14,23 @@
 			merchantType=0
 		</where>
 	</select>
+	<select id="qeuryByUserId" resultType="com.accp.vo.yl.VipVo">
+		SELECT u.`userID`,u.`userName`,l.`userEmail`,u.`mailboxVerification`,u.`userRealName`,l.`userPwd`,u.`userSex`,u.`userRegistrationTime`,u.`contactMailbox`,
+		u.`registerIP`,u.`lastEntry`,u.`country`,u.`provincialID`,u.`cityID`,u.`auditStatus`,u.`userPhone`,u.`merchantType`,u.`recentEntry`,u.`adDetail` FROM `user` AS u
+		JOIN login AS l ON u.`userID`=l.`userID`
+		where u.userID=#{userid}
+	</select>
+	<update id="updateVip">
+		UPDATE `user` SET userPhone=#{vo.userPhone},userRealName=#{vo.userRealName},userSex=#{vo.userSex},adDetail=#{vo.adDetail},auditStatus=#{vo.auditStatus},mailboxVerification=#{vo.mailboxVerification} WHERE userID=#{vo.userID};
+		UPDATE `login` SET userPwd=#{vo.userPwd} WHERE userID=#{vo.userID};
+		<if test="vo.auditStatus==2">
+		INSERT INTO `news`(addRessee,content,sendingTime,readState,newsType)VALUES(#{vo.userID},'您的会员申请已通过审核',NOW(),0,1);
+		</if>
+		<if test="vo.auditStatus==3">
+		INSERT INTO `news`(addRessee,content,sendingTime,readState,newsType)VALUES(#{vo.userID},'您的会员申请未通过审核',NOW(),0,1);
+		</if>
+	</update>
+	<!-- 商家操作块 -->
 	<select id="selectShop" resultType="user">
 		SELECT * FROM `user` 
 		<where>
@@ -28,4 +46,135 @@
 				`merchantType`!=0
 		</where>
 	</select>
+	<!-- 地址查询 -->
+	<select id="queryShareaCountry" resultType="Sharea">
+		SELECT * FROM `sharea` WHERE `level`=0
+	</select>
+	<select id="queryShareaProvincial" resultType="Sharea">
+		SELECT * FROM `sharea` WHERE `level`=1
+		<if test="pid!=null">
+			and `pid`=#{pid}
+		</if>
+	</select>
+	<select id="queryShareaCity" resultType="Sharea">
+		SELECT * FROM `sharea` WHERE `level`=2
+		<if test="pid!=null">
+			and `pid`=#{pid}
+		</if>
+	</select>
+	<update id="updateShop">
+		update user set userPhone=#{u.userPhone},userSex=#{u.userSex},country=#{u.country},
+		provincialID=#{u.provincialID},countyID=#{u.countyID},cityID=#{u.cityID},adDetail=#{u.adDetail},
+		guaranteeMoney=#{u.guaranteeMoney},reason=#{u.reason},businessState=#{u.businessState},
+		auditStatus=#{u.auditStatus},mailboxVerification=#{u.mailboxVerification} 
+		where userID=#{u.userID};
+		<if test="u.auditStatus==2">
+		INSERT INTO `news`(addRessee,content,sendingTime,readState,newsType)VALUES(#{u.userID},'您的商家申请已通过审核',NOW(),0,1);
+		</if>
+		<if test="u.auditStatus==3">
+		INSERT INTO `news`(addRessee,content,sendingTime,readState,newsType)VALUES(#{u.userID},'您的商家申请未通过审核',NOW(),0,1);
+		</if>
+	</update>
+	<!-- 商家入驻 -->
+	<select id="queryEnterAll" resultType="com.accp.vo.yl.UserShareaVo">
+		SELECT u.`userID`,u.`userName`,u.`merchantType`,u.`shopName`,u.`merchantRegistrationTime`,u.`userRealName`,u.`signature`,u.`identityNumder`, u.`merchantEmail`,
+				s.`mergerName` AS livecityName,u.`qq`,u.`weChat`,u.`auditStatus`
+				FROM (SELECT * FROM `sharea`) AS s 
+				RIGHT JOIN `user` AS u ON u.`liveCityID`=s.`areaID`
+		<where>
+			<if test="userName!=null">
+				 u.`userName` like '%${userName}%' and
+			</if>
+			<if test="merchantType!=null">
+				 u.`merchantType` like '%${merchantType}%'  and
+			</if>
+			<if test="auditStatus!=null">
+				 u.`auditStatus` like '%${auditStatus}%' and
+			</if>
+				`merchantType`!=0
+		</where>
+	</select>
+	<select id="queryEnterById" resultType="com.accp.vo.yl.UserShareaVo">
+		SELECT  u.`userID`,u.`userName`,u.`merchantType`,u.`shopName`,u.`userRealName`,u.`signature`,u.`identityNumder`,u.`businessState`,u.`reason`,u.`mailboxVerification`,u.`userPhone`,u.`userSex`,
+				u.`shopImg`,u.`identityHandImg`,u.`identityNegativeImg`,u.`identityPositiveImg`,u.`adDetail`,u.`registerIP`,u.`lastEntry`,u.`userRegistrationTime`,u.`recentEntry`,
+				u.`languageNameText`,u.`majorNameText`,u.`merchantEmail`,u.`merchantPhone`,u.`qq`,u.`country`,u.`provincialID`,u.`cityID`,u.`auditStatus`,
+				u.`weChat`,u.`profession`,u.`height`,u.`constellation`,u.`age`,u.`selfIntroduction`,u.`guaranteeMoney`,
+				u.`experience`,u.`experienceStatus`,t1.`stName` AS firstServiceName,t2.`stName` AS secondServiceName,
+				s.`mergerName` AS livecityName,s1.`mergerName` AS countryName,s2.`mergerName` AS provincialName,
+				s3.`mergerName` AS cityName,s4.`mergerName` AS countyName 
+				FROM (SELECT * FROM `sharea`) AS s 
+				RIGHT JOIN `user` AS u ON u.`liveCityID`=s.`areaID`
+				LEFT JOIN `sharea` AS s1 ON u.`country`=s1.`areaID`
+				LEFT JOIN `sharea` AS s2 ON u.`provincialID`=s2.`areaID`
+				LEFT JOIN `sharea` AS s3 ON u.`cityID`=s3.`areaID`
+				LEFT JOIN `sharea` AS s4 ON u.`countyID`=s4.`areaID`
+				LEFT JOIN `servicetype` AS t1 ON u.`firstServiceID`=t1.`stid`
+				LEFT JOIN `servicetype` AS t2 ON u.`secondServiceID`=t2.`stid`
+				WHERE u.`userID`=#{userid}
+	</select>
+	<select id="queryShopAuthen" resultType="com.accp.vo.yl.shopRecomment">
+		SELECT u.`userID`,a.`applyID`,u.`userName`,t.`stName`,u.`userRealName`,u.`userSex`,u.`merchantPhone`,a.`submitTime`,a.`auditTime`,a.`auditStatus` FROM `appraisalapply` AS a 
+				LEFT JOIN `servicetype` AS t ON t.`stid`=a.`stid`
+				LEFT JOIN `user` AS u ON u.`userID`=a.`userID`
+		<where>
+			<if test="userName!=null">
+				 u.`userName` like '%${userName}%' 
+			</if>
+			<if test="auditStatus!=null">
+				and a.`auditStatus` like '%${auditStatus}%' 
+			</if>
+		</where>
+	</select>
+	<select id="queryShopRecommend" resultType="com.accp.vo.yl.shopRecomment">
+		SELECT s.`serviceID`,u.`userID`,u.`userName`,u.`shopName`,t.`stName`,u.`merchantType`,u.`auditStatus`,u.`userSex`,u.`merchantPhone`,s.`recommendBool`,u.`guaranteeMoney`,u.`qq`,u.`weChat`,u.`registerIP`,u.`lastEntry`,u.`userRegistrationTime`,u.`recentEntry`,u.`businessState`,s.`serviceCoverImg` FROM `services` AS s
+			LEFT JOIN `user` AS u ON s.`userID`=u.`userID`
+			LEFT JOIN `servicetype` AS t ON s.`stid`=t.`stid`
+		<where>
+		 		u.`merchantType`!=0
+			<if test="userName!=null">
+			    and u.`userName` like '%${userName}%' 
+			</if>
+			<if test="merchantType!=null">
+				and u.`merchantType` like '%${merchantType}%'  
+			</if>
+			<if test="shopName!=null">
+				and u.`shopName` like '%${shopName}%'  
+			</if>
+			<if test="recommendbool!=null">
+				and s.`recommendbool` like '%${recommendbool}%' 
+			</if>
+		</where>
+	</select>
+	<!-- 查看推荐详情 -->
+	<select id="queryRecommendById" resultType="com.accp.vo.yl.shopRecomment">
+				SELECT s.`serviceID`,u.`userID`,u.`userName`,u.`shopName`,t.`stName`,u.`merchantType`,u.`auditStatus`,u.`userSex`,u.`merchantPhone`,s.`recommendBool`,u.`guaranteeMoney`,u.`qq`,u.`weChat`,u.`registerIP`,u.`lastEntry`,u.`userRegistrationTime`,u.`recentEntry`,u.`businessState`,s.`serviceCoverImg` FROM `services` AS s
+						LEFT JOIN `user` AS u ON s.`userID`=u.`userID`
+						LEFT JOIN `servicetype` AS t ON s.`stid`=t.`stid`
+						where s.`serviceID` = #{serviceID} 
+	</select>
+	<select id="queryAuthenDetails" resultType="Appraisalapply">
+		SELECT * FROM `appraisalapply` AS a
+		LEFT JOIN `servicetype` AS s ON a.`stid`=s.`stid`
+		WHERE applyID=#{applyid}
+	</select>
+	<!-- 托管 -->
+	<select id="queryTrusteeship" resultType="com.accp.vo.yl.UserTruVo">
+		SELECT u.`userName`,u.`shopName`,t.`applicationTime`,t.`auditTime`,u.`trusteeshipStartTime`,u.`trusteeshipMonth`,u.`trusteeship`,t.`auditStatus`,u.`merchantType`,u.`businessState` FROM `trusteeship` AS t
+		LEFT JOIN `user` AS u ON t.`userID`=u.`userID`
+		<where>
+		 		u.`merchantType`!=0
+			<if test="userName!=null">
+			    and u.`userName` like '%${userName}%' 
+			</if>
+			<if test="merchantType!=null">
+				and u.`merchantType` like '%${merchantType}%'  
+			</if>
+			<if test="shopName!=null">
+				and u.`shopName` like '%${shopName}%'  
+			</if>
+			<if test="trusteeship!=null">
+				and u.`trusteeship` like '%${trusteeship}%' 
+			</if>
+		</where>
+	</select>	
 </mapper>

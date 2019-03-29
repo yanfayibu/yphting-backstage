@@ -1,199 +1,203 @@
 
-[{
-	"title" : "后台首页",
-	"icon" : "icon-computer",
-	"href" : "page/main.html",
-	"spread" : false
-},{
-	"title" : "论坛管理",
-	"icon" : "icon-text",
-	"href" : "",
-	"spread" : false,
-	"children" : [
-		{
-			"title" : "帖子管理",
-			"icon" : "&#xe61c;",
-			"href" : "page/news/newsList.html",
-			"spread" : false
-		},
-		{
-			"title" : "帖子板块管理",
-			"icon" : "&#xe609;",
-			"href" : "page/404.html",
-			"spread" : false
-		},
-		{
-			"title" : "论坛投诉管理",
-			"icon" : "&#xe609;",
-			"href" : "page/404.html",
-			"spread" : false
-		}
-	]
-},{
-	"title" : "服务管理",
-	"icon" : "&#xe631;",
-	"href" : "",
-	"spread" : false,
-	"children" : [
-		{
+[
+	{
+		"title": "后台首页",
+		"icon": "icon-computer",
+		"href": "page/main.html",
+		"spread": false
+	},
+	{
+		"title": "论坛管理",
+		"icon": "icon-text",
+		"href": "",
+		"spread": false,
+		"children": [
+			{
+				"title": "帖子管理",
+				"icon": "&#xe61c;",
+				"href": "page/news/PostManagement.html",
+				"spread": false
+			},
+			{
+				"title": "帖子板块管理",
+				"icon": "&#xe609;",
+				"href": "page/404.html",
+				"spread": false
+			},
+			{
+				"title": "帖子投诉管理",
+				"icon": "&#xe609;",
+				"href": "page/news/PostComplaint.html",
+				"spread": false
+			}
+		]
+	},
+	{
+		"title": "服务管理",
+		"icon": "&#xe631;",
+		"href": "",
+		"spread": false,
+		"children": [
+			{
 			"title" : "服务类别设置",
 			"icon" : "&#xe61c;",
-			"href" : "page/systemParameter/systemParameter.html",
+			"href" : "page/services/serviceType.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务审核管理",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/serviceAuditManagement.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务级别设置",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/serviceLevel.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务类型预约",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/serviceReservation.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务审核",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/serviceAudit.html",
 			"spread" : false
 		},
 		{
 			"title" : "退款管理",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/refundManagement.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务投诉",
 			"icon" : "&#xe609;",
-			"href" : "page/404.html",
+			"href" : "page/services/serviceComplaint.html",
 			"spread" : false
 		}
-	]
-},{
-	"title" : "会员管理",
-	"icon" : "&#xe630;",
-	"href" : "",
-	"spread" : false,
-	"children" : [
-		{
+		]
+	},
+	{
+		"title": "会员管理",
+		"icon": "&#xe630;",
+		"href": "",
+		"spread": false,
+		"children": [
+			{
 			"title" : "会员审核",
 			"icon" : "&#xe61c;",
-			"href" : "page/404.html",
+			"href" : "../page/member/audit.html",
 			"spread" : false
 		},
 		{
 			"title" : "商家管理",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/merchantMe.html",
 			"spread" : false
 		},
 		{
 			"title" : "商家入驻",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/enterMe.html",
 			"spread" : false
 		},
 		{
 			"title" : "鉴定审核",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/authenMe.html",
 			"spread" : false
 		},
 		{
 			"title" : "商家推荐",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/recommend.html",
 			"spread" : false
 		},
 		{
 			"title" : "商家托管",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/trusteeship.html",
 			"spread" : false
 		},
 		{
 			"title" : "评价管理",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/commentList.html",
 			"spread" : false
 		},
 		{
 			"title" : "金币记录",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/goldCoin.html",
 			"spread" : false
 		},
 		{
 			"title" : "积分记录",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/integral.html",
 			"spread" : false
 		},
 		{
 			"title" : "充值记录",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/topUp.html",
 			"spread" : false
 		},
 		{
 			"title" : "提现记录",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/tixian.html",
 			"spread" : false
 		},
 		{
 			"title" : "保障金详情",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/cash.html",
 			"spread" : false
 		},
 		{
 			"title" : "收藏排行",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/collect.html",
 			"spread" : false
 		},
 		{
 			"title" : "服务收藏",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/CollectServe.html",
 			"spread" : false
 		},
 		{
 			"title" : "BBS收藏",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/BBS.html",
 			"spread" : false
 		},
 		{
 			"title" : "店铺收藏",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/shop.html",
 			"spread" : false
 		},
 		{
 			"title" : "会员站内信",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/letter.html",
 			"spread" : false
 		},
 		{
 			"title" : "留言反馈",
 			"icon" : "&#xe609;",
-			"href" : "page/login/login.html",
+			"href" : "../page/member/leave.html",
 			"spread" : false
 		}
-	]
-},{
+		]
+	},{
 	"title" : "广告位管理",
 	"icon" : "&#xe64c;",
 	"href" : "",
@@ -202,18 +206,53 @@
 		{
 			"title" : "广告位排版",
 			"icon" : "&#xe61c;",
-			"href" : "page/links/linksList.html",
+			"href" : "page/guanggao/advertising.html",
+			"spread" : false
+		},{
+			"title" : "广告位申请",
+			"icon" : "&#xe61c;",
+			"href" : "page/guanggao/Applyfor.html",
 			"spread" : false
 		}
 	]
-},{
-	"title" : "修改密码",
+},
+{
+	"title" : "数据统计",
 	"icon" : "&#xe64c;",
-	"href" : "page/user/changePwd.html",
-	"spread" : false
-},{
-	"title" : "韩汀首页",
-	"icon" : "&#xe64c;",
-	"href" : "page/links/linksList.html",
-	"spread" : false
-}]
+	"href" : "",
+	"spread" : false,
+	"children" : [
+		{
+			"title" : "提现数据统计",
+			"icon" : "&#xe61c;",
+			"href" : "page/dataCount/tiXianCount.html",
+			"spread" : false
+		},{
+			"title" : "充值数据统计",
+			"icon" : "&#xe61c;",
+			"href" : "page/dataCount/chongZhiCount.html",
+			"spread" : false
+		},{
+			"title" : "广告费用数据统计",
+			"icon" : "&#xe61c;",
+			"href" : "page/dataCount/GuanGao.html",
+			"spread" : false
+		}
+		,{
+			"title" : "退款手续费数据统计",
+			"icon" : "&#xe61c;",
+			"href" : "page/dataCount/tuiKuan.html",
+			"spread" : false
+		}
+		
+	]
+},
+	
+	
+	{
+		"title": "修改密码",
+		"icon": "&#xe64c;",
+		"href": "page/user/changePwd.html",
+		"spread": false
+	}
+]

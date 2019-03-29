@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="/layui/css/layui.css">
+</head>
+
+<body>
+	<div id="vmCnt">
+		<header style="padding: 10px 5px;" class="hd">
+			<h2>
+				服务类别管理 <input type="button" style="float: right; margin-left: 20px;"
+					class="layui-btn" value="更新数据" /> <input type="button"
+					style="float: right;" class="layui-btn" value="增加栏目" />
+			</h2>
+			<br>
+			<h5>
+				服务类型: <select class="layui-select-disabled" id="serTypesel">
+					<option value="0">所有</option>
+					<option v-for="temp in selAll" v-bind:value="temp.stid">
+						{{temp.stName}}</option>
+					<!-- <option></option> -->
+				</select>
+
+			</h5>
+
+		</header>
+		<section>
+			<table class="layui-table" lay-skin="line" id="table1">
+				<thead>
+					<tr>
+						<td>ID</td>
+						<td>分类名称</td>
+						<td>排序</td>
+						<td>是否显示</td>
+						<td>操作</td>
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="(temp,index) in serType">
+						<tr><!--  @change="changeVal(temp.stid,$event,temp.display)"  @change="changeValRadio(temp.stid,$event)"-->
+							<td v-text="temp.stid"></td>
+							<td v-text="temp.stName" style="font-weight: 600">会员名称</td>
+							<td><input type="text" v-model="temp.sort" /></td>
+							<td>
+								<input :name="'dis'+index" v-model="temp.display" type="radio" value="true"/>显示 
+								
+								<input :name="'dis'+index" v-model="temp.display" type="radio" value="false"/>不显示
+							</td>
+							<td>
+								<a href="javascript:void(0)" @click="removeInfo(temp.stid)">删除</a>
+							</td>
+						</tr>
+						
+						<template v-for="tem in temp.data">
+							<tr><!--  @change="changeVal(tem.stid,$event,tem.display)" @change="changeValRadio(tem.stid,$event)"-->
+						        <td v-text="tem.stid"></td>
+								<td v-text="'——'+tem.stName">会员名称</td>
+								<td><input type="text" v-model="tem.sort" /></td>
+								<td>
+									<input :name="'dis2'+index+tem.stid" v-model="tem.display" type="radio" value="true" />显示 
+									
+									<input :name="'dis2'+index+tem.stid" v-model="tem.display" type="radio" value="false"/>不显示
+								</td>
+								<td>
+									<a href="javascript:void(0)" @click="removeInfo(tem.stid)">删除</a>
+								</td>
+					        </tr>
+					        
+						        <template v-for="te in tem.data">
+									<tr> <!--  @change="changeVal(te.stid,$event,te.display)"  @change="changeValRadio(te.stid,$event)"-->
+								          	<td v-text="te.stid"></td>
+											<td v-text="'—— ——'+te.stName">会员名称</td>
+											<td><input type="text" v-model="te.sort"/></td>
+											<td>
+												<input :name="'dis3'+index+te.stid" v-model="te.display" type="radio" value="true"/>显示 
+												
+												<input :name="'dis3'+index+te.stid" v-model="te.display" type="radio" value="false"/>不显示
+											</td>
+											<td>
+												<a href="javascript:void(0)" @click="removeInfo(te.stid)">删除</a>
+											</td>
+								    </tr>
+							</template>
+						</template>
+					</template>
+				</tbody>
+
+			</table>
+		</section>
+	</div>
+</body>
+<script type="text/javascript" src="/js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript">
+	
+	var vm = new Vue(
+			{
+				el : "#vmCnt",
+				data : {
+					serType : [],
+					selAll : [],
+					serTypeAll : [],
+					arr1 : [],
+					arr2 : []
+				},
+				methods : {
+					initInfo : function(stclass){
+						var topArr = []; //声明一个数组，存储所有的json数据
+						$.ajax({
+							url : "/gwx/c/service/stclassSel",
+							type : "GET",
+							data : {
+								"stclass" : stclass
+							},
+							async: false,
+							dataType : "JSON",
+							success : function(jsondata) {
+								
+								for (var i = 0; i < jsondata.length; i++) {
+									if (jsondata[i].stPid == 0) {
+										jsondata[i].data = []; //给一级菜单下面添加data数据，存放二级菜单
+										topArr.push(jsondata[i]); //得到一级菜单
+										vm.selAll.push(jsondata[i]);
+									}
+								}
+
+								for (var j = 0; j < topArr.length; j++) {
+									for (var i = 0; i < jsondata.length; i++) {
+										if (jsondata[i].stPid == topArr[j].stid) {
+											jsondata[i].data = [];
+											topArr[j].data.push(jsondata[i]); //把获取的二级菜单存放到一级菜单的data对象中
+										}
+									}
+								}
+
+								for (var j = 0; j < topArr.length; j++) {
+									for (var m = 0; m < topArr[j].data.length; m++) {
+										for (var i = 0; i < jsondata.length; i++) {
+											if (jsondata[i].stPid == topArr[j].data[m].stid) {
+												topArr[j].data[m].data.push(jsondata[i]); //把获取的三级菜单存放到二级菜单的data对象中
+											}
+										}
+									}
+								}
+							},
+						});
+						vm.serType = topArr;
+						vm.serTypeAll = topArr;
+					},
+				removeInfo: function(stid) {
+					
+					layui.use('layer', function(){
+
+						layer.confirm('是否确认删除信息?', {
+						    btn: ['确定','取消'],
+						    time: 200000, //20s后自动关闭
+						    },function(index){
+							$.post("/gwx/c/service/delSt",{"stid":stid},function(json){
+								if(json.code=="200"){
+									location.replace(location.href);
+								}else{
+									alert(json.msg);
+								}
+								
+							},"json");
+						    
+						  },function(){
+							layer.closeAll('dialog');
+						  });
+					});
+				},
+				},
+				
+			});
+			
+			
+		vm.initInfo(0);	
+		
+		$("#serTypesel").change(function(){
+			var stids = $("#serTypesel").val();
+			var serTypeLike=[];
+			if(stids==0){
+				vm.serType=vm.serTypeAll;
+			}else{
+				$.each(vm.serTypeAll,function(i,obj){
+					if(obj.stid==stids){
+						serTypeLike.push(obj);
+					}
+				});
+				vm.serType=serTypeLike;
+			}
+			
+		});
+		
+		function showsArr1(){  //sort
+			var inpBef=new Array();
+			for(var i=0;i<$("[type=text]").length;i++){
+				inpBef.push($("[type=text]").eq(i).val());
+			}
+			return inpBef;
+		}
+		
+		function showsArr2(){  //display
+			var radBef=new Array();
+			for(var i=0;i<$("input:radio:checked").length;i++){
+				radBef.push($("input:radio:checked").eq(i).val());
+			} 
+			return radBef;
+		}
+		var arry1=new Array();
+		var arry2=new Array();
+		window.onload=function loads(){
+			arry1=showsArr1();
+			arry2=showsArr2();
+		}
+		
+		$("[value='更新数据']").click(function(){
+			var sortArr=showsArr1();
+			var displayArr=showsArr2();
+			
+			for(var j=0;j<sortArr.length;j++){
+				if(sortArr[j]!=arry1[j]||displayArr[j]!=arry2[j]){
+					var stid = $("[type=text]").eq(j).parent().prev().prev().text();
+					var sort = sortArr[j];
+					var display = $("input:radio:checked").eq(j).val();
+					
+					$.post("/gwx/c/service/updSt",{"sort":sort,"display":display,"stid":stid},function(json){
+						if(json.code=="200"){
+							location.replace(location.href);
+						}else if(json.code=="500"){
+							alert(json.msg);
+						}
+						
+					},"json");
+				}
+			}
+		});
+		
+		
+		$("[value='增加栏目']").click(function(){
+			
+			layui.use('layer', function(){
+				  var layer = layui.layer;
+				  layer.open({
+						type: 2,
+						title: '新增栏目',
+						area: ['1147px', '590px'],
+						content: ['addServiceType.html','no'],
+						//anim: 2,
+						//btnAlign: 'c',
+						maxmin: true
+					});
+			}); 
+			
+		});
+		
+</script>
+</html>
